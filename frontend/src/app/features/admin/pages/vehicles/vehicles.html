@@ -1,1 +1,180 @@
-<p>vehicles works!</p>
+<div class="vehicles-page">
+	<header class="page-header">
+		<div>
+			<span class="eyebrow">Admin / Vehicles</span>
+			<h1>Fleet inventory</h1>
+			<p>Manage the live fleet, availability, pricing, and maintenance state.</p>
+		</div>
+
+		<div class="page-header__actions">
+			<button type="button" class="action-pill action-pill--ghost" (click)="loadVehicles()">
+				<span class="material-symbols-outlined">refresh</span>
+				Refresh
+			</button>
+			<a routerLink="/admin/dashboard" class="action-pill action-pill--primary">
+				<span class="material-symbols-outlined">dashboard</span>
+				Dashboard
+			</a>
+		</div>
+	</header>
+
+	<section class="summary-grid">
+		<article class="summary-card summary-card--accent">
+			<span class="material-symbols-outlined">directions_car</span>
+			<div>
+				<small>Total vehicles</small>
+				<strong>{{ vehicles.length }}</strong>
+			</div>
+		</article>
+
+		<article class="summary-card">
+			<span class="material-symbols-outlined">check_circle</span>
+			<div>
+				<small>Available</small>
+				<strong>{{ availableCount }}</strong>
+			</div>
+		</article>
+
+		<article class="summary-card">
+			<span class="material-symbols-outlined">build_circle</span>
+			<div>
+				<small>Maintenance</small>
+				<strong>{{ maintenanceCount }}</strong>
+			</div>
+		</article>
+
+		<article class="summary-card">
+			<span class="material-symbols-outlined">block</span>
+			<div>
+				<small>Unavailable</small>
+				<strong>{{ unavailableCount }}</strong>
+			</div>
+		</article>
+	</section>
+
+	<section class="content-grid">
+		<article class="panel panel--form">
+			<div class="panel__header">
+				<div>
+					<h2>Add vehicle</h2>
+					<p>Create a new fleet item directly from this admin view.</p>
+				</div>
+			</div>
+
+			<form class="vehicle-form" [formGroup]="form" (ngSubmit)="submit()">
+				<label>
+					<span>Brand</span>
+					<input type="text" formControlName="brand" placeholder="Tesla" />
+				</label>
+
+				<label>
+					<span>Model</span>
+					<input type="text" formControlName="model" placeholder="Model Y" />
+				</label>
+
+				<label>
+					<span>Type</span>
+					<select formControlName="type">
+						<option value="SUV">SUV</option>
+						<option value="Sedan">Sedan</option>
+						<option value="Electric">Electric</option>
+						<option value="Compact">Compact</option>
+					</select>
+				</label>
+
+				<label>
+					<span>Price per day</span>
+					<input type="number" min="1" formControlName="price_per_day" placeholder="150" />
+				</label>
+
+				<label>
+					<span>Status</span>
+					<select formControlName="status">
+						<option value="AVAILABLE">Available</option>
+						<option value="MAINTENANCE">Maintenance</option>
+						<option value="UNAVAILABLE">Unavailable</option>
+					</select>
+				</label>
+
+				<label class="form-span-2">
+					<span>Image URL</span>
+					<input type="url" formControlName="image_url" placeholder="https://..." />
+				</label>
+
+				<label class="form-span-2">
+					<span>Specs</span>
+					<textarea rows="4" formControlName="specs" placeholder="Transmission, battery, seats..."></textarea>
+				</label>
+
+				<div class="form-actions form-span-2">
+					<button type="submit" class="action-pill action-pill--primary" [disabled]="saving">
+						<span class="material-symbols-outlined">add</span>
+						{{ saving ? 'Saving...' : 'Create vehicle' }}
+					</button>
+				</div>
+			</form>
+
+			<p class="error-banner" *ngIf="errorMessage">{{ errorMessage }}</p>
+		</article>
+
+		<article class="panel panel--list">
+			<div class="panel__header panel__header--list">
+				<div>
+					<h2>Fleet list</h2>
+					<p>Connected to the backend vehicles API.</p>
+				</div>
+
+				<span class="panel__badge">{{ loading ? 'Loading...' : 'Live data' }}</span>
+			</div>
+
+			<div class="vehicle-list" *ngIf="vehicles.length; else emptyState">
+				<article class="vehicle-card" *ngFor="let vehicle of vehicles">
+					<div class="vehicle-card__media">
+						<img
+							*ngIf="vehicle.image_url; else defaultVehicleIcon"
+							[src]="vehicle.image_url"
+							[alt]="vehicle.brand + ' ' + vehicle.model"
+						/>
+						<ng-template #defaultVehicleIcon>
+							<span class="material-symbols-outlined">directions_car</span>
+						</ng-template>
+					</div>
+
+					<div class="vehicle-card__body">
+						<div class="vehicle-card__top">
+							<div>
+								<h3>{{ vehicle.brand }} {{ vehicle.model }}</h3>
+								<p>{{ vehicle.type }}</p>
+							</div>
+
+							<span class="vehicle-status" [ngClass]="statusClass(vehicle.status)">
+								{{ statusLabel(vehicle.status) }}
+							</span>
+						</div>
+
+						<div class="vehicle-card__meta">
+							<span><strong>{{ vehicle.price_per_day | currency:'USD':'symbol':'1.0-0' }}</strong> / day</span>
+							<span *ngIf="vehicle.specs">{{ vehicle.specs }}</span>
+							<span *ngIf="!vehicle.specs">No specs added</span>
+						</div>
+
+						<div class="vehicle-card__actions">
+							<button type="button" class="text-btn" (click)="deleteVehicle(vehicle.id)">
+								<span class="material-symbols-outlined">delete</span>
+								Delete
+							</button>
+						</div>
+					</div>
+				</article>
+			</div>
+
+			<ng-template #emptyState>
+				<div class="empty-state" *ngIf="!loading">
+					<span class="material-symbols-outlined">garage</span>
+					<h3>No vehicles yet</h3>
+					<p>Create the first vehicle from the form on the left.</p>
+				</div>
+			</ng-template>
+		</article>
+	</section>
+</div>

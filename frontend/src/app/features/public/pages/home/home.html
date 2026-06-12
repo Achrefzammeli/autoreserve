@@ -1,1 +1,170 @@
-<p>home works!</p>
+<div class="home-page">
+	<section class="hero">
+		<div class="hero__bg">
+			<img
+				alt="Luxury sports car in a dramatic twilight setting"
+				src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfAaXYQ-dwYd4W6plSXzcH7UmGZ-nhtNHtv3ftdGnGSgjAcGQ-TF8qo1rJ1ayJ9Odsj4iPwnwYPIGMobHuQyQOuT4Vjni3AlgEc3ns04nXYYgljXYl8tlVxNzS3zCa_EufJyZtBEpKE0iyS5JJm01Kmp-MShnRSR98umRdKgERbFrMNDPaqd4ZwmS476FdYMfiN_yC9Q1uquCS8b9i7DeuFZ05SDuD0nedcyLVkyvbnpYi5RzloZX4d2-BtUdUoV8xNIVs46Z7uwU"
+			/>
+			<div class="hero__overlay"></div>
+		</div>
+
+		<div class="hero__content">
+			<div class="hero__intro">
+				<span>Next-Gen Mobility</span>
+				<h1>Intelligent fleet management for the modern road.</h1>
+				<p>
+					Seamlessly bridge the gap between asset management and customer experience with
+					AutoReserve's unified rental platform.
+				</p>
+			</div>
+
+			<div class="search-card glass-card">
+				<div class="search-grid">
+					<label class="search-field">
+						<span>Pickup location</span>
+						<div class="search-field__control">
+							<span class="material-symbols-outlined">location_on</span>
+							<input type="text" placeholder="City or Airport" />
+						</div>
+					</label>
+
+					<label class="search-field">
+						<span>Vehicle type</span>
+						<div class="search-field__control">
+							<span class="material-symbols-outlined">directions_car</span>
+							<select>
+								<option>All Categories</option>
+								<option>SUV</option>
+								<option>Sedan</option>
+								<option>Electric</option>
+							</select>
+						</div>
+					</label>
+				</div>
+
+				<div class="search-grid">
+					<label class="search-field">
+						<span>Pickup date & time</span>
+						<div class="search-field__control">
+							<span class="material-symbols-outlined">calendar_today</span>
+							<input type="datetime-local" />
+						</div>
+					</label>
+
+					<label class="search-field">
+						<span>Return date & time</span>
+						<div class="search-field__control">
+							<span class="material-symbols-outlined">event_repeat</span>
+							<input type="datetime-local" />
+						</div>
+					</label>
+				</div>
+
+				<button type="button" class="primary-action">Search Available Vehicles</button>
+			</div>
+		</div>
+	</section>
+
+	<section class="section section--featured">
+		<div class="section__header">
+			<div>
+				<h2>Featured Collections</h2>
+				<p>
+					Curated vehicle categories tailored for every professional journey, from executive
+					travel to rugged exploration.
+				</p>
+			</div>
+
+			<div class="section__arrows">
+				<button type="button" aria-label="Previous collection">
+					<span class="material-symbols-outlined">arrow_back</span>
+				</button>
+				<button type="button" aria-label="Next collection">
+					<span class="material-symbols-outlined">arrow_forward</span>
+				</button>
+			</div>
+		</div>
+
+		<div class="collection-grid">
+			<article class="collection-card collection-card--suv">
+				<div class="collection-card__overlay"></div>
+				<div class="collection-card__content">
+					<span>08 Available</span>
+					<h3>Luxury SUVs</h3>
+				</div>
+			</article>
+
+			<article class="collection-card collection-card--sedan">
+				<div class="collection-card__overlay"></div>
+				<div class="collection-card__content">
+					<span>12 Available</span>
+					<h3>Executive Sedans</h3>
+				</div>
+			</article>
+
+			<article class="collection-card collection-card--electric">
+				<div class="collection-card__overlay"></div>
+				<div class="collection-card__content">
+					<span>15 Available</span>
+					<h3>Pure Electric</h3>
+				</div>
+			</article>
+		</div>
+	</section>
+
+	<section class="section section--benefits">
+		<div class="benefits-layout">
+			<div class="benefits-intro">
+				<h2>Why Choose AutoReserve</h2>
+				<p>
+					We redefine mobility with precision technology and a focus on executive-level service
+					reliability.
+				</p>
+			</div>
+
+			<div class="benefits-grid">
+				<article class="benefit-card">
+					<div class="benefit-card__icon"><span class="material-symbols-outlined">speed</span></div>
+					<h3>Easy Booking</h3>
+					<p>
+						Our frictionless interface allows you to reserve a vehicle in under 60 seconds from
+						any device.
+					</p>
+				</article>
+
+				<article class="benefit-card">
+					<div class="benefit-card__icon"><span class="material-symbols-outlined">support_agent</span></div>
+					<h3>24/7 Support</h3>
+					<p>
+						Dedicated concierge agents available around the clock to assist with your rental or
+						fleet needs.
+					</p>
+				</article>
+
+				<article class="benefit-card">
+					<div class="benefit-card__icon"><span class="material-symbols-outlined">security</span></div>
+					<h3>Tier-1 Security</h3>
+					<p>
+						Advanced telemetry and encryption ensure your journey and data are protected at all
+						times.
+					</p>
+				</article>
+			</div>
+		</div>
+	</section>
+
+	<section class="section section--cta">
+		<div class="cta-card">
+			<div class="cta-card__pattern"></div>
+			<h2>Ready to transform your journey?</h2>
+			<p>
+				Join over 5,000 businesses managing their mobility through AutoReserve's high-performance
+				cloud platform.
+			</p>
+			<div class="cta-card__actions">
+				<a routerLink="/auth/register" class="cta-button cta-button--primary">Get Started Now</a>
+				<a routerLink="/contact" class="cta-button cta-button--secondary">Contact Sales</a>
+			</div>
+		</div>
+	</section>
+</div>

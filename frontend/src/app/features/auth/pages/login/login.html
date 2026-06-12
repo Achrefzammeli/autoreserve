@@ -1,1 +1,56 @@
-<p>login works!</p>
+<div class="auth-page auth-page--login">
+  <main class="auth-shell auth-shell--login">
+
+
+    <section class="auth-panel auth-panel--login">
+      <div class="auth-panel__mobile-brand md-hidden">
+        <span class="auth-brand__mark auth-brand__mark--small">AR</span>
+        <span>AutoReserve</span>
+      </div>
+
+      <div class="auth-card">
+        <header class="auth-card__header">
+          <h2>Welcome back</h2>
+          <p>Please enter your credentials to access your console.</p>
+        </header>
+
+        <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()">
+          <label class="auth-field">
+            <span>Email address</span>
+            <div class="auth-input-wrap">
+              <span class="material-symbols-outlined">mail</span>
+              <input formControlName="email" type="email" placeholder="manager@autoreserve.com" />
+            </div>
+          </label>
+
+          <label class="auth-field">
+            <div class="auth-field__row">
+              <span>Password</span>
+            
+            </div>
+            <div class="auth-input-wrap">
+              <span class="material-symbols-outlined">lock</span>
+              <input formControlName="password" type="password" placeholder="••••••••" />
+            </div>
+          </label>
+
+
+
+          <button class="auth-primary-btn" type="submit">
+            Sign in
+            <span class="material-symbols-outlined">arrow_forward</span>
+          </button>
+
+
+        </form>
+
+        <footer class="auth-card__footer">
+          <p>
+            Don&apos;t have an account?
+            <a routerLink="/auth/register">Apply for fleet access</a>
+          </p>
+        </footer>
+      </div>
+    </section>
+  </main>
+</div>

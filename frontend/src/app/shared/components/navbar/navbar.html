@@ -1,14 +1,24 @@
-<header>
+<nav class="public-nav">
+  <a class="public-nav__brand" routerLink="/">
+    <span class="public-nav__mark">AR</span>
+    <span>AutoReserve</span>
+  </a>
 
-  <div>
-    AutoReserve
+  <div class="public-nav__links">
+    <a routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }">Explore</a>
+    <a routerLink="/fleet" routerLinkActive="is-active">Manage Fleet</a>
+    <a routerLink="/about" routerLinkActive="is-active">Solutions</a>
   </div>
 
-  <div>
-    Fleet
-    About
-    Contact
-    Login
+  <div class="public-nav__actions">
+    <a routerLink="/auth/login" class="public-nav__icon" aria-label="Notifications">
+      <span class="material-symbols-outlined">notifications</span>
+    </a>
+    <a routerLink="/auth/login" class="public-nav__icon" aria-label="Help">
+      <span class="material-symbols-outlined">help</span>
+    </a>
+    <a routerLink="/auth/login" class="public-nav__avatar" aria-label="User profile">
+      <span>U</span>
+    </a>
   </div>
-
-</header>
+</nav>

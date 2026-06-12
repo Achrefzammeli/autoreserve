@@ -1,1 +1,65 @@
-<p>register works!</p>
+<div class="auth-page auth-page--register">
+
+  <main class="register-shell">
+    <section class="register-card">
+      <div class="register-card__accent"></div>
+
+      <div class="register-card__header">
+        <h1>Create account</h1>
+        <p>
+          Join the professional fleet network and manage your reservations with precision.
+        </p>
+      </div>
+
+      <form class="register-form" [formGroup]="form" (ngSubmit)="submit()">
+        <label class="register-field">
+          <span>Full name</span>
+          <div class="auth-input-wrap register-input-wrap">
+            <span class="material-symbols-outlined">person</span>
+            <input formControlName="name" type="text" placeholder="John Doe" />
+          </div>
+        </label>
+
+        <label class="register-field">
+          <span>Email address</span>
+          <div class="auth-input-wrap register-input-wrap">
+            <span class="material-symbols-outlined">mail</span>
+            <input formControlName="email" type="email" placeholder="j.doe@enterprise.com" />
+          </div>
+        </label>
+
+        <label class="register-field">
+          <span>Phone number</span>
+          <div class="auth-input-wrap register-input-wrap">
+            <span class="material-symbols-outlined">phone</span>
+            <input formControlName="phone" type="tel" placeholder="+1 (555) 000-0000" />
+          </div>
+        </label>
+
+        <label class="register-field">
+          <span>Password</span>
+          <div class="auth-input-wrap register-input-wrap">
+            <span class="material-symbols-outlined">lock</span>
+            <input formControlName="password" type="password" placeholder="••••••••" />
+          </div>
+          <small>Must be at least 8 characters with one special character.</small>
+        </label>
+
+        <button class="register-submit" type="submit">
+          Create account
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </button>
+      </form>
+
+      <div class="register-divider">
+        <span>Or register with</span>
+      </div>
+
+      <p class="register-footer">
+        Already have an account?
+        <a routerLink="/auth/login">Sign in here</a>
+      </p>
+    </section>
+
+  </main>
+</div>

@@ -1,9 +1,37 @@
-.admin-layout{
-  display:flex;
-  min-height:100vh;
+.admin-layout {
+  min-height: 100vh;
+  background: #f7f9fb;
 }
 
-.content{
-  flex:1;
-  padding:24px;
+.admin-layout__content {
+  margin-left: 280px;
+  min-height: 100vh;
+  padding: 2rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #c5c6cd transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #c5c6cd;
+  border-radius: 10px;
+}
+
+@media (max-width: 960px) {
+  .admin-layout__content {
+    margin-left: 0;
+    padding: 1rem;
+  }
 }

@@ -1,20 +1,227 @@
-<h1>Dashboard Admin</h1>
+<div class="admin-shell">
+  <header class="admin-topbar">
+    <div>
+      <h2>Fleet Overview</h2>
+      <p>Real-time performance analytics and operations management.</p>
+    </div>
 
-<div class="stats">
+    <div class="admin-topbar__actions">
+      <button type="button" class="admin-btn admin-btn--ghost">
+        <span class="material-symbols-outlined">download</span>
+        Export CSV
+      </button>
+      <button type="button" class="admin-btn admin-btn--primary">
+        <span class="material-symbols-outlined">add</span>
+        New Booking
+      </button>
+    </div>
+  </header>
 
-  <mat-card>
-    <h2>Total Vehicles</h2>
-    <p>120</p>
-  </mat-card>
+  <section class="admin-stats grid-4">
+    <article class="admin-stat-card">
+      <div class="admin-stat-card__head">
+        <span class="material-symbols-outlined stat-icon stat-icon--blue">calendar_today</span>
+        <span class="stat-badge stat-badge--success">+12% <span class="material-symbols-outlined">trending_up</span></span>
+      </div>
+      <div>
+        <p>Total Bookings</p>
+        <h3>1,284</h3>
+      </div>
+    </article>
 
-  <mat-card>
-    <h2>Bookings Today</h2>
-    <p>18</p>
-  </mat-card>
+    <article class="admin-stat-card">
+      <div class="admin-stat-card__head">
+        <span class="material-symbols-outlined stat-icon stat-icon--blue">payments</span>
+        <span class="stat-badge stat-badge--success">+8.4% <span class="material-symbols-outlined">trending_up</span></span>
+      </div>
+      <div>
+        <p>Total Revenue</p>
+        <h3>$42,910</h3>
+      </div>
+    </article>
 
-  <mat-card>
-    <h2>Revenue</h2>
-    <p>12 500 TND</p>
-  </mat-card>
+    <article class="admin-stat-card">
+      <div class="admin-stat-card__head">
+        <span class="material-symbols-outlined stat-icon stat-icon--blue">directions_car</span>
+        <span class="stat-badge">84/102</span>
+      </div>
+      <div>
+        <p>Active Fleet</p>
+        <h3>82%</h3>
+      </div>
+    </article>
 
+    <article class="admin-stat-card">
+      <div class="admin-stat-card__head">
+        <span class="material-symbols-outlined stat-icon stat-icon--red">build</span>
+        <span class="stat-badge stat-badge--danger">Action Required</span>
+      </div>
+      <div>
+        <p>In Maintenance</p>
+        <h3>06</h3>
+      </div>
+    </article>
+  </section>
+
+  <section class="admin-grid admin-grid--two">
+    <article class="admin-panel admin-panel--chart">
+      <div class="admin-panel__header">
+        <h3>Fleet Occupancy Trend</h3>
+        <div class="admin-filter-pills">
+          <span class="is-active">Weekly</span>
+          <span>Monthly</span>
+        </div>
+      </div>
+
+      <div class="admin-chart" aria-label="Fleet occupancy trend chart">
+        <span class="admin-bar" style="--h: 40%"></span>
+        <span class="admin-bar" style="--h: 55%"></span>
+        <span class="admin-bar" style="--h: 75%"></span>
+        <span class="admin-bar" style="--h: 65%"></span>
+        <span class="admin-bar" style="--h: 85%"></span>
+        <span class="admin-bar" style="--h: 95%"></span>
+        <span class="admin-bar" style="--h: 80%"></span>
+      </div>
+
+      <div class="admin-chart__labels">
+        <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+      </div>
+    </article>
+
+    <article class="admin-panel">
+      <h3>Fleet Allocation</h3>
+
+      <div class="allocation-list">
+        <div class="allocation-row">
+          <div class="allocation-row__top"><span>Premium SUVs</span><span>42 Units</span></div>
+          <div class="progress"><span style="width: 65%"></span></div>
+        </div>
+        <div class="allocation-row">
+          <div class="allocation-row__top"><span>Luxury Sedans</span><span>28 Units</span></div>
+          <div class="progress"><span style="width: 45%"></span></div>
+        </div>
+        <div class="allocation-row">
+          <div class="allocation-row__top"><span>Electric Fleet</span><span>18 Units</span></div>
+          <div class="progress"><span style="width: 85%"></span></div>
+        </div>
+        <div class="allocation-row">
+          <div class="allocation-row__top"><span>Compact Utility</span><span>14 Units</span></div>
+          <div class="progress"><span style="width: 25%"></span></div>
+        </div>
+      </div>
+
+      <div class="efficiency-note">
+        <p>Efficiency Note</p>
+        <span>EV fleet is performing 14% above average utilization this month.</span>
+      </div>
+    </article>
+  </section>
+
+  <section class="admin-panel admin-panel--table">
+    <div class="admin-panel__header admin-panel__header--table">
+      <h3>Recent Operations</h3>
+      <label class="admin-search">
+        <span class="material-symbols-outlined">search</span>
+        <input type="text" placeholder="Search bookings..." />
+      </label>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Vehicle</th>
+            <th>Customer</th>
+            <th>Status</th>
+            <th>Date Range</th>
+            <th class="text-right">Revenue</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="row-vehicle">
+                <div class="row-vehicle__thumb">
+                  <img alt="Tesla Model 3" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-96vvsbAyZyW3jmmDfGBtoy5OCZOAwHN8H5cn4n-B7yc1GJXvYUkOr92pjg_xrqI-MIp_JQ-31wKSf408gFf9WKJc39FbD6QkxQX9tQeuOStBC45oosvvoWLZNa7NQlEraQUZYIbfubacIhE8Dai0f6hCcrNSKXLIXfxRCivwdZFujq890fenaGmERKlXe9Docsy1LuGgWiLNYcw_c-YJFKTvusVTD4Ee-kbLjUsI5wA9Y_WZkcF3JC1UxtwdO4jXBfBLNZd8DkY" />
+                </div>
+                <div>
+                  <strong>Tesla Model 3</strong>
+                  <span>Plate: AR-2024-X</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <strong>Alexander Vance</strong>
+              <span>vance.a@gmail.com</span>
+            </td>
+            <td><span class="chip chip--success">Active</span></td>
+            <td><strong>Oct 12 - Oct 15</strong><span>3 Days</span></td>
+            <td class="text-right"><strong>$450.00</strong></td>
+            <td class="text-right"><button type="button" class="icon-btn material-symbols-outlined">more_vert</button></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="row-vehicle">
+                <div class="row-vehicle__thumb">
+                  <img alt="Porsche Taycan" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8rQMLZPxSXuBywP9PdbFAYz7XkoyRro-1UI-mIiaRVWkUB-RbeZT-x60Srz-C3DAg_0tTckx1w9kB-nbImx6XjkRqws8hyTrpHpDAoBnGIOCUqwRA_vuuqFx-RGJQR7DTq3pavXrTdA4UfM2bFt28EWJtfRmd3l4ocxnbpDkZJRmET1vPvTiwKPxEEjrvK7dNULRiCGIp_jYMXD9lsD6jv5l0bYzaDbnSRF3CQDl4RSf-61Muw69wyf8WiXRWVyosGgttmUURBHQ" />
+                </div>
+                <div>
+                  <strong>Porsche Taycan</strong>
+                  <span>Plate: AR-911-S</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <strong>Elena Rodriguez</strong>
+              <span>elena.r@corporate.com</span>
+            </td>
+            <td><span class="chip chip--pending">Pending</span></td>
+            <td><strong>Oct 14 - Oct 18</strong><span>4 Days</span></td>
+            <td class="text-right"><strong>$1,200.00</strong></td>
+            <td class="text-right"><button type="button" class="icon-btn material-symbols-outlined">more_vert</button></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="row-vehicle">
+                <div class="row-vehicle__thumb">
+                  <img alt="BMW X5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdvbmsjveC2UxsFrCdrNa93mvX8XGIxYkDhmOE50zasEFWk6elCU9cH21ncnLHm79jhH2ZMgVnkrlIztvEPLH5jp9Wn9Dh98v3fQTTz7VfFzgEo6Mi6-A57b-Xm_KZylFsW32OzLNVy3uoHm571KHfFubIEhtzfzjzHyqANFrd_vmu4f_5rFW-Szed1QM6MCka0E7EQqLl20NBqdueYOm7X11PsPEHeGKFz51oJ-50baa1VSMlGH7skkO71s2iYe9HwEI6dgmhlw0" />
+                </div>
+                <div>
+                  <strong>BMW X5 xDrive</strong>
+                  <span>Plate: AR-SUV-8</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <strong>Marcus Thorne</strong>
+              <span>m.thorne@tech.io</span>
+            </td>
+            <td><span class="chip chip--reserved">Reserved</span></td>
+            <td><strong>Oct 20 - Oct 25</strong><span>5 Days</span></td>
+            <td class="text-right"><strong>$850.00</strong></td>
+            <td class="text-right"><button type="button" class="icon-btn material-symbols-outlined">more_vert</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-footer">
+      <button type="button">View All Operations</button>
+    </div>
+  </section>
+
+  <footer class="admin-footer">
+    <div>
+      <h4>AutoReserve Systems</h4>
+      <p>© 2024 AutoReserve Systems. All rights reserved.</p>
+    </div>
+
+    <div class="admin-footer__links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Fleet Support</a>
+      <a href="#">Contact Us</a>
+    </div>
+  </footer>
 </div>

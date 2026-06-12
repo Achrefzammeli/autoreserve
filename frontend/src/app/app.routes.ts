@@ -49,6 +49,7 @@ export const routes: Routes = [
 
   {
     path: 'client',
+    canActivate: ['AuthGuard'],
     component: ClientLayout,
     children: [
       { path: 'dashboard', component: ClientDashboard },
