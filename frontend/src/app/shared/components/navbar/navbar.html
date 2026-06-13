@@ -5,14 +5,15 @@
   <div class="max-w-[1200px] w-full mx-auto px-6 flex justify-between items-center">
     
     <!-- Groupe Gauche : Logo Image + Liens Desktop -->
-    <div class="flex items-center gap-8">
-      <!-- Logo Intégré (Utilise l'image directement comme marqueur de marque) -->
-      <a routerLink="/" class="flex items-center h-16 select-none py-2">
-        <!-- L'image contenant déjà le texte "AUTORESERVE", elle se suffit à elle-même -->
-        <img src="https://github.com/Achrefzammeli/autoreserve/blob/main/frontend/logocar.jfif" 
-             alt="AutoReserve Logo" 
-             class="h-full w-auto object-contain mix-blend-screen scale-125 origin-left transition-transform hover:scale-130" />
-      </a>
+          <div class="flex items-center gap-10">
+            <!-- Logo AutoReserve (Intégration robuste avec gestion de fallback) -->
+            <a href="#" (click)="$event.preventDefault()" class="flex items-center h-16 select-none py-2 group">
+              <img [src]="logoSrc" 
+                   (error)="handleLogoError()"
+                   alt="AutoReserve Logo" 
+                   class="h-full w-auto object-contain mix-blend-screen scale-125 origin-left transition-transform duration-300 hover:scale-130" />
+            </a>
+
 
       <!-- Liens Navigation (Desktop) - Textes en blanc/gris clair pour le thème sombre -->
       <div class="hidden md:flex items-center gap-6">

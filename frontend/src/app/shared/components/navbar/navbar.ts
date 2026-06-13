@@ -13,13 +13,15 @@ import { AuthService } from '../../../core/services/auth.service';
 export class Navbar implements OnInit {
   isLoggedIn = false;
   mobileMenuOpen = false;
-
+  logoSrc = '/logocar.png';
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit() {
     this.checkAuth();
   }
-
+  handleLogoError() {
+    this.logoSrc = '/logocar.png'; // Fallback image
+  }
   toggleMobileMenu() {
     this.mobileMenuOpen = !this.mobileMenuOpen;
   }
