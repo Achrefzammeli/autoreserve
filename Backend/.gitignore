@@ -1,0 +1,6 @@
+.env
+*.db
+*.log
+autoreserve.db
+autoreserve.log
+

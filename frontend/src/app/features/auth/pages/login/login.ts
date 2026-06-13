@@ -1,59 +1,59 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { AuthService } from './../../../../core/services/auth.service';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, CommonModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
 export class Login {
+  private fb     = inject(FormBuilder);
+  private auth   = inject(AuthService);
+  private router = inject(Router);
 
-  private fb = inject(FormBuilder);
-
-  constructor(
-    private auth: AuthService,
-    private router: Router
-  ) {}
+  loading      = signal(false);
+  errorMessage = signal('');
+  showPassword = signal(false);
 
   form = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required]]
+    email:    ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required]],
   });
 
+  togglePassword() {
+    this.showPassword.update(v => !v);
+  }
+
   submit() {
-    if (this.form.invalid) return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    this.loading.set(true);
+    this.errorMessage.set('');
 
     this.auth.login(this.form.getRawValue()).subscribe({
       next: (res: any) => {
         this.auth.saveToken(res.access_token);
-
-        const role = this.getRoleFromToken(res.access_token);
-
-        if (role === 'ADMIN') {
-          this.router.navigate(['/admin/dashboard']);
-          return;
-        }
-
-        this.router.navigate(['/client/dashboard']);
+        const role = this.auth.getRole();
+        this.loading.set(false);
+        this.router.navigate(role === 'ADMIN' ? ['/admin/dashboard'] : ['/client/dashboard']);
       },
-      error: (err) => {
-        console.error(err);
-      }
+      error: () => {
+        this.loading.set(false);
+        this.errorMessage.set('Invalid email or password. Please try again.');
+      },
     });
   }
 
-  private getRoleFromToken(token: string): string | null {
-    try {
-      const payload = token.split('.')[1];
-      const normalized = payload.replace(/-/g, '+').replace(/_/g, '/');
-      const decoded = JSON.parse(atob(normalized));
-
-      return decoded.role ?? null;
-    } catch {
-      return null;
-    }
+  isInvalid(field: string) {
+    const c = this.form.get(field);
+    return c?.invalid && c?.touched;
   }
 }

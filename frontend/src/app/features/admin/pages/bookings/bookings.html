@@ -1,1 +1,139 @@
-<p>bookings works!</p>
+<div class="bookings-page">
+  <header class="page-header">
+    <div>
+      <span class="eyebrow">Admin / Bookings</span>
+      <h1>Bookings management</h1>
+      <p>Review, confirm, or cancel customer reservations.</p>
+    </div>
+    <div class="page-header__actions">
+      <button type="button" class="action-pill action-pill--ghost" (click)="loadBookings()">
+        <span class="material-symbols-outlined">refresh</span>
+        Refresh
+      </button>
+    </div>
+  </header>
+
+  <!-- Summary cards -->
+  <section class="summary-grid">
+    <article class="summary-card summary-card--accent">
+      <span class="material-symbols-outlined">calendar_month</span>
+      <div>
+        <small>Total bookings</small>
+        <strong>{{ bookings.length }}</strong>
+      </div>
+    </article>
+    <article class="summary-card">
+      <span class="material-symbols-outlined">schedule</span>
+      <div>
+        <small>Pending</small>
+        <strong>{{ pendingCount }}</strong>
+      </div>
+    </article>
+    <article class="summary-card">
+      <span class="material-symbols-outlined">check_circle</span>
+      <div>
+        <small>Confirmed</small>
+        <strong>{{ confirmedCount }}</strong>
+      </div>
+    </article>
+    <article class="summary-card">
+      <span class="material-symbols-outlined">payments</span>
+      <div>
+        <small>Total revenue</small>
+        <strong>{{ totalRevenue | currency:'USD':'symbol':'1.0-0' }}</strong>
+      </div>
+    </article>
+  </section>
+
+  <!-- Filter pills -->
+  <div class="filter-bar">
+    <button
+      *ngFor="let f of filters"
+      type="button"
+      class="filter-pill"
+      [class.is-active]="activeFilter === f"
+      (click)="applyFilter(f)">
+      {{ f }}
+    </button>
+  </div>
+
+  <!-- Error -->
+  <p class="error-banner" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <!-- Loading -->
+  <div class="empty-state" *ngIf="loading">
+    <span class="material-symbols-outlined spin">autorenew</span>
+    <p>Loading bookings...</p>
+  </div>
+
+  <!-- Table -->
+  <article class="panel" *ngIf="!loading">
+    <div class="table-wrap" *ngIf="filtered.length; else emptyState">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Customer</th>
+            <th>Vehicle</th>
+            <th>Dates</th>
+            <th class="text-right">Amount</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let booking of filtered">
+            <td><span class="booking-id">#{{ booking.id }}</span></td>
+            <td>
+              <strong>{{ booking.customer_name ?? '—' }}</strong>
+              <span class="sub">{{ booking.customer_email ?? '' }}</span>
+            </td>
+            <td>
+              <strong>{{ booking.vehicle_brand }} {{ booking.vehicle_model }}</strong>
+            </td>
+            <td>
+              <strong>{{ booking.start_date | date:'MMM d' }} – {{ booking.end_date | date:'MMM d, y' }}</strong>
+            </td>
+            <td class="text-right">
+              <strong>{{ booking.total_price | currency:'USD':'symbol':'1.0-0' }}</strong>
+            </td>
+            <td>
+              <span class="chip" [ngClass]="statusClass(booking.status)">
+                {{ booking.status }}
+              </span>
+            </td>
+            <td>
+              <div class="action-group" *ngIf="updatingId !== booking.id; else updating">
+                <button
+                  *ngIf="booking.status !== 'CONFIRMED'"
+                  type="button"
+                  class="action-pill action-pill--xs action-pill--confirm"
+                  (click)="updateStatus(booking, 'CONFIRMED')">
+                  Confirm
+                </button>
+                <button
+                  *ngIf="booking.status !== 'CANCELLED'"
+                  type="button"
+                  class="action-pill action-pill--xs action-pill--cancel"
+                  (click)="updateStatus(booking, 'CANCELLED')">
+                  Cancel
+                </button>
+              </div>
+              <ng-template #updating>
+                <span class="sub">Updating...</span>
+              </ng-template>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <span class="material-symbols-outlined">calendar_month</span>
+        <h3>No bookings found</h3>
+        <p>No bookings match the selected filter.</p>
+      </div>
+    </ng-template>
+  </article>
+</div>

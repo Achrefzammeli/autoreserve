@@ -1,1 +1,152 @@
-<p>customers works!</p>
+<div class="customers-page">
+
+  <header class="page-header">
+    <div>
+      <span class="eyebrow">Admin / Customers</span>
+      <h1>Customers</h1>
+      <p>View all registered clients and their booking history.</p>
+    </div>
+    <div class="page-header__actions">
+      <button type="button" class="action-pill action-pill--ghost" (click)="loadData()">
+        <span class="material-symbols-outlined">refresh</span>
+        Refresh
+      </button>
+    </div>
+  </header>
+
+  <!-- Summary cards -->
+  <section class="summary-grid">
+    <article class="summary-card summary-card--accent">
+      <span class="material-symbols-outlined">group</span>
+      <div>
+        <small>Total customers</small>
+        <strong>{{ customers.length }}</strong>
+      </div>
+    </article>
+    <article class="summary-card">
+      <span class="material-symbols-outlined">payments</span>
+      <div>
+        <small>Total revenue</small>
+        <strong>{{ totalRevenue | currency:'USD':'symbol':'1.0-0' }}</strong>
+      </div>
+    </article>
+  </section>
+
+  <!-- Search -->
+  <div class="search-bar">
+    <span class="material-symbols-outlined">search</span>
+    <input
+      type="text"
+      placeholder="Search by name or email..."
+      [(ngModel)]="searchQuery"
+      (ngModelChange)="onSearch()" />
+  </div>
+
+  <!-- Error -->
+  <p class="error-banner" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <!-- Loading -->
+  <div class="empty-state" *ngIf="loading">
+    <span class="material-symbols-outlined spin">autorenew</span>
+    <p>Loading customers...</p>
+  </div>
+
+  <!-- Table -->
+  <article class="panel" *ngIf="!loading">
+    <div class="table-wrap" *ngIf="filtered.length; else emptyState">
+      <table>
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th class="text-center">Bookings</th>
+            <th class="text-right">Total spent</th>
+            <th>Last booking</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let customer of filtered">
+            <td>
+              <div class="customer-cell">
+                <div class="avatar">{{ customer.name.charAt(0).toUpperCase() }}</div>
+                <div>
+                  <strong>{{ customer.name }}</strong>
+                  <span class="sub">{{ customer.email }}</span>
+                </div>
+              </div>
+            </td>
+            <td class="text-center">
+              <span class="chip chip--neutral">{{ customer.bookings_count }}</span>
+            </td>
+            <td class="text-right">
+              <strong>{{ customer.total_spent | currency:'USD':'symbol':'1.0-0' }}</strong>
+            </td>
+            <td>
+              <span *ngIf="customer.last_booking; else never">
+                {{ customer.last_booking | date:'MMM d, y' }}
+              </span>
+              <ng-template #never><span class="sub">—</span></ng-template>
+            </td>
+            <td>
+              <button
+                type="button"
+                class="action-pill action-pill--xs action-pill--ghost"
+                (click)="openDrawer(customer)">
+                View history
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <span class="material-symbols-outlined">group_off</span>
+        <h3>No customers found</h3>
+        <p>Try adjusting your search.</p>
+      </div>
+    </ng-template>
+  </article>
+
+</div>
+
+<!-- Booking history drawer -->
+<div class="overlay" [class.is-open]="drawerOpen" (click)="closeDrawer()"></div>
+
+<aside class="drawer" [class.is-open]="drawerOpen">
+  <div class="drawer__header">
+    <div *ngIf="selectedCustomer">
+      <div class="avatar avatar--lg">{{ selectedCustomer.name.charAt(0).toUpperCase() }}</div>
+      <h2>{{ selectedCustomer.name }}</h2>
+      <span class="sub">{{ selectedCustomer.email }}</span>
+    </div>
+    <button type="button" class="close-btn" (click)="closeDrawer()">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+
+  <div class="drawer__body">
+    <h3>Booking history</h3>
+
+    <div *ngIf="customerBookings.length; else noBookings">
+      <div class="booking-item" *ngFor="let b of customerBookings">
+        <div class="booking-item__top">
+          <strong>{{ b.vehicle_brand }} {{ b.vehicle_model }}</strong>
+          <span class="chip" [ngClass]="statusClass(b.status)">{{ b.status }}</span>
+        </div>
+        <div class="booking-item__meta">
+          <span>{{ b.start_date | date:'MMM d' }} – {{ b.end_date | date:'MMM d, y' }}</span>
+          <strong>{{ b.total_price | currency:'USD':'symbol':'1.0-0' }}</strong>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noBookings>
+      <div class="empty-state">
+        <span class="material-symbols-outlined">calendar_month</span>
+        <p>No bookings yet.</p>
+      </div>
+    </ng-template>
+  </div>
+</aside>

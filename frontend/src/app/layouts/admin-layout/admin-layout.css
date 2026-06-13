@@ -11,27 +11,23 @@
   overflow-y: auto;
 }
 
-.custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: #c5c6cd transparent;
-}
+.custom-scrollbar { scrollbar-width: thin; scrollbar-color: #c5c6cd transparent; }
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #c5c6cd; border-radius: 10px; }
 
-.custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #c5c6cd;
-  border-radius: 10px;
-}
-
+/* ── Mobile ────────────────────────────────────────────────────── */
 @media (max-width: 960px) {
   .admin-layout__content {
     margin-left: 0;
-    padding: 1rem;
+    /* top: mobile topbar (56px) */
+    padding: calc(56px + 1rem) 1rem calc(60px + env(safe-area-inset-bottom) + 1rem);
+  }
+}
+
+/* ── Small phones (iPhone SE, 375px) ──────────────────────────── */
+@media (max-width: 390px) {
+  .admin-layout__content {
+    padding: calc(56px + 0.75rem) 0.75rem calc(60px + env(safe-area-inset-bottom) + 0.75rem);
   }
 }

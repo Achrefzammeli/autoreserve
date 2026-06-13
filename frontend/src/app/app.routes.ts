@@ -12,6 +12,7 @@ import { Contact } from './features/public/pages/contact/contact';
 
 import { Login } from './features/auth/pages/login/login';
 import { Register } from './features/auth/pages/register/register';
+import { ForgotPassword } from './features/auth/pages/forgot-password/forgot-password';
 
 import { Dashboard as ClientDashboard } from './features/client/pages/dashboard/dashboard';
 import { Profile } from './features/client/pages/profile/profile';
@@ -21,11 +22,12 @@ import { Dashboard as AdminDashboard } from './features/admin/pages/dashboard/da
 import { Vehicles } from './features/admin/pages/vehicles/vehicles';
 import { Customers } from './features/admin/pages/customers/customers';
 import { Reports } from './features/admin/pages/reports/reports';
-import { ForgotPassword } from './features/auth/pages/forgot-password/forgot-password';
-import { Bookings as AdminBookings }
-from './features/admin/pages/bookings/bookings';
-export const routes: Routes = [
+import { Bookings as AdminBookings } from './features/admin/pages/bookings/bookings';
 
+import { authGuard } from './core/guards/core/guards/auth-guard';
+import { adminGuard } from './core/guards/core/guards/admin-guard';
+
+export const routes: Routes = [
   {
     path: '',
     component: PublicLayout,
@@ -49,7 +51,7 @@ export const routes: Routes = [
 
   {
     path: 'client',
-    canActivate: ['AuthGuard'],
+    canActivate: [authGuard],
     component: ClientLayout,
     children: [
       { path: 'dashboard', component: ClientDashboard },
@@ -60,6 +62,7 @@ export const routes: Routes = [
 
   {
     path: 'admin',
+    canActivate: [adminGuard],
     component: AdminLayout,
     children: [
       { path: 'dashboard', component: AdminDashboard },
@@ -69,9 +72,6 @@ export const routes: Routes = [
       { path: 'reports', component: Reports }
     ]
   },
-  {
-    path: '**',
-    redirectTo: ''
-  }
 
+  { path: '**', redirectTo: '' }
 ];
