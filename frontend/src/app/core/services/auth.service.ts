@@ -77,4 +77,7 @@ export class AuthService {
       return null;
     }
   }
+  confirmTotp(email: string, code: string) {
+  return this.http.post(`${this.api}/auth/confirm-totp`, { email, code });
+}
 }

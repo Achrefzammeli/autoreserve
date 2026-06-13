@@ -1,0 +1,9 @@
+body {
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Effet Smooth Scroll */
+html {
+  scroll-behavior: smooth;
+}

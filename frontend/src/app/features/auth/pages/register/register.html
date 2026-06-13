@@ -8,7 +8,7 @@
 
   <main class="register-main">
 
-    <!-- Brand header -->
+    <!-- Brand -->
     <div class="register-brand">
       <div class="brand-mark">
         <span class="material-symbols-outlined">directions_car</span>
@@ -18,112 +18,183 @@
 
     <div class="register-card">
 
-      <div class="card-header">
-        <div class="card-header__badge">New account</div>
-        <h1>Create your account</h1>
-        <p>Join the AutoReserve fleet network and manage your reservations with precision.</p>
-      </div>
+      <!-- ── STEP 1 : Form ─────────────────────────────────────── -->
+      <ng-container *ngIf="step() === 'form'">
 
-      <!-- Error -->
-      <div class="error-alert" *ngIf="errorMessage()">
-        <span class="material-symbols-outlined">error</span>
-        {{ errorMessage() }}
-      </div>
+        <div class="card-header">
+          <div class="card-header__badge">New account</div>
+          <h1>Create your account</h1>
+          <p>Join AutoReserve and manage your reservations with precision.</p>
+        </div>
 
-      <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="register-form">
+        <div class="error-alert" *ngIf="errorMessage()">
+          <span class="material-symbols-outlined">error</span>
+          {{ errorMessage() }}
+        </div>
 
-        <!-- Name + email row -->
-        <div class="field-row">
-          <div class="field" [class.field--error]="isInvalid('name')">
+        <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="register-form">
+
+          <div class="field" [class.field--error]="isInvalid(form, 'name')">
             <label for="name">Full name</label>
             <div class="input-wrap">
               <span class="material-symbols-outlined input-icon">person</span>
               <input id="name" type="text" formControlName="name"
                      placeholder="Jane Doe" autocomplete="name" />
             </div>
-            <span class="field-error" *ngIf="isInvalid('name')">Name is required</span>
+            <span class="field-error" *ngIf="isInvalid(form, 'name')">Name is required</span>
+                  </div>
+        <div class="field">
+          <label for="phone">Phone number <span class="optional">optional</span></label>
+          <div class="input-wrap">
+            <span class="material-symbols-outlined input-icon">phone</span>
+            <input id="phone" type="tel" formControlName="phone"
+                  placeholder="+216 XX XXX XXX" autocomplete="tel" />
           </div>
-
-          <div class="field" [class.field--error]="isInvalid('phone')">
-            <label for="phone">Phone <span class="optional">optional</span></label>
+        </div>
+                  <div class="field" [class.field--error]="isInvalid(form, 'email')">
+            <label for="email">Email address</label>
             <div class="input-wrap">
-              <span class="material-symbols-outlined input-icon">phone</span>
-              <input id="phone" type="tel" formControlName="phone"
-                     placeholder="+1 (555) 000-0000" autocomplete="tel" />
+              <span class="material-symbols-outlined input-icon">mail</span>
+              <input id="email" type="email" formControlName="email"
+                     placeholder="you@company.com" autocomplete="email" />
+            </div>
+            <span class="field-error" *ngIf="isInvalid(form, 'email')">Enter a valid email address</span>
+          </div>
+
+          <div class="field" [class.field--error]="isInvalid(form, 'password')">
+            <label for="password">Password</label>
+            <div class="input-wrap">
+              <span class="material-symbols-outlined input-icon">lock</span>
+              <input id="password"
+                     [type]="showPassword() ? 'text' : 'password'"
+                     formControlName="password"
+                     placeholder="Min. 8 characters"
+                     autocomplete="new-password" />
+              <button type="button" class="eye-btn" (click)="togglePassword()">
+                <span class="material-symbols-outlined">
+                  {{ showPassword() ? 'visibility_off' : 'visibility' }}
+                </span>
+              </button>
+            </div>
+            <span class="field-error" *ngIf="isInvalid(form, 'password')">
+              Minimum 8 characters required
+            </span>
+
+            <div class="strength-meter" *ngIf="form.get('password')?.value">
+              <div class="strength-bars">
+                <span [class.is-filled]="passwordStrength >= 1" [class]="'bar-' + strengthClass"></span>
+                <span [class.is-filled]="passwordStrength >= 2" [class]="'bar-' + strengthClass"></span>
+                <span [class.is-filled]="passwordStrength >= 3" [class]="'bar-' + strengthClass"></span>
+                <span [class.is-filled]="passwordStrength >= 4" [class]="'bar-' + strengthClass"></span>
+              </div>
+              <span class="strength-label" [class]="'label-' + strengthClass">{{ strengthLabel }}</span>
             </div>
           </div>
-        </div>
 
-        <div class="field" [class.field--error]="isInvalid('email')">
-          <label for="email">Email address</label>
-          <div class="input-wrap">
-            <span class="material-symbols-outlined input-icon">mail</span>
-            <input id="email" type="email" formControlName="email"
-                   placeholder="you@company.com" autocomplete="email" />
-          </div>
-          <span class="field-error" *ngIf="isInvalid('email')">Enter a valid email address</span>
-        </div>
+          <button type="submit" class="submit-btn" [class.is-loading]="loading()">
+            <ng-container *ngIf="!loading()">
+              Create account
+              <span class="material-symbols-outlined">arrow_forward</span>
+            </ng-container>
+            <span class="spinner" *ngIf="loading()"></span>
+          </button>
 
-        <div class="field" [class.field--error]="isInvalid('password')">
-          <label for="password">Password</label>
-          <div class="input-wrap">
-            <span class="material-symbols-outlined input-icon">lock</span>
-            <input id="password"
-                   [type]="showPassword() ? 'text' : 'password'"
-                   formControlName="password"
-                   placeholder="Min. 8 characters"
-                   autocomplete="new-password" />
-            <button type="button" class="eye-btn" (click)="togglePassword()">
-              <span class="material-symbols-outlined">
-                {{ showPassword() ? 'visibility_off' : 'visibility' }}
-              </span>
-            </button>
-          </div>
-          <span class="field-error" *ngIf="isInvalid('password')">Minimum 8 characters required</span>
+        </form>
 
-          <!-- Strength meter -->
-          <div class="strength-meter" *ngIf="form.get('password')?.value">
-            <div class="strength-bars">
-              <span [class.is-filled]="passwordStrength >= 1" [class]="'bar-' + strengthClass"></span>
-              <span [class.is-filled]="passwordStrength >= 2" [class]="'bar-' + strengthClass"></span>
-              <span [class.is-filled]="passwordStrength >= 3" [class]="'bar-' + strengthClass"></span>
-              <span [class.is-filled]="passwordStrength >= 4" [class]="'bar-' + strengthClass"></span>
-            </div>
-            <span class="strength-label" [class]="'label-' + strengthClass">{{ strengthLabel }}</span>
-          </div>
-        </div>
-
-        <button type="submit" class="submit-btn" [class.is-loading]="loading()">
-          <span>
-            <ng-container *ngIf="!loading()">Create account</ng-container>
-            <ng-container *ngIf="loading()">Creating account…</ng-container>
+        <div class="trust-row">
+          <span class="trust-badge">
+            <span class="material-symbols-outlined">lock</span>
+            Encrypted
           </span>
-          <span class="material-symbols-outlined" *ngIf="!loading()">arrow_forward</span>
-          <span class="spinner" *ngIf="loading()"></span>
-        </button>
+          <span class="trust-badge">
+            <span class="material-symbols-outlined">verified_user</span>
+            Secure
+          </span>
+          <span class="trust-badge">
+            <span class="material-symbols-outlined">privacy_tip</span>
+            Private
+          </span>
+        </div>
 
-      </form>
+        <p class="form-footer">
+          Already have an account?
+          <a routerLink="/auth/login">Sign in</a>
+        </p>
 
-      <!-- Trust badges -->
-      <div class="trust-row">
-        <span class="trust-badge">
-          <span class="material-symbols-outlined">lock</span>
-          Encrypted
-        </span>
-        <span class="trust-badge">
-          <span class="material-symbols-outlined">verified_user</span>
-          Secure
-        </span>
-        <span class="trust-badge">
-          <span class="material-symbols-outlined">privacy_tip</span>
-          Private
-        </span>
-      </div>
+      </ng-container>
 
-      <p class="form-footer">
-        Already have an account?
-        <a routerLink="/auth/login">Sign in</a>
-      </p>
+      <!-- ── STEP 2 : TOTP Setup ───────────────────────────────── -->
+      <ng-container *ngIf="step() === 'totp'">
+
+        <div class="card-header">
+          <div class="card-header__badge card-header__badge--blue">
+            <span class="material-symbols-outlined">security</span>
+            Step 2 of 2 — Required
+          </div>
+          <h1>Secure your account</h1>
+          <p>Scan this QR code with <strong>Authy</strong> or <strong>Google Authenticator</strong>, then enter the 6-digit code to activate your account.</p>
+        </div>
+
+        <div class="error-alert" *ngIf="errorMessage()">
+          <span class="material-symbols-outlined">error</span>
+          {{ errorMessage() }}
+        </div>
+
+        <!-- QR Code -->
+        <div class="qr-block">
+          <div class="qr-frame">
+            <img [src]="qrCode()" alt="TOTP QR Code" class="qr-img" />
+          </div>
+          <div class="qr-secret">
+            <span class="secret-label">Can't scan? Enter this key manually</span>
+            <code class="secret-code">{{ secret() }}</code>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <span class="material-symbols-outlined">schedule</span>
+          <span>The app generates a new 6-digit code every 30 seconds. Enter the current one below.</span>
+        </div>
+
+        <!-- Code form -->
+        <form [formGroup]="codeForm" (ngSubmit)="confirmTotp()" novalidate>
+          <div class="field" [class.field--error]="isInvalid(codeForm, 'code')">
+            <label for="totp-code">6-digit code</label>
+            <div class="input-wrap">
+              <span class="material-symbols-outlined input-icon">pin</span>
+              <input
+                id="totp-code"
+                type="text"
+                inputmode="numeric"
+                maxlength="6"
+                formControlName="code"
+                placeholder="000000"
+                class="code-input"
+                autocomplete="one-time-code" />
+            </div>
+            <span class="field-error" *ngIf="isInvalid(codeForm, 'code')">
+              Enter the 6-digit code from your app
+            </span>
+          </div>
+<button type="button" class="skip-btn" (click)="skipTotp()">
+  Skip for now — set up later
+</button>
+          <button type="submit" class="submit-btn submit-btn--blue" [class.is-loading]="loading()">
+            <ng-container *ngIf="!loading()">
+              Activate account
+              <span class="material-symbols-outlined">check_circle</span>
+            </ng-container>
+            <span class="spinner" *ngIf="loading()"></span>
+          </button>
+
+        </form>
+
+        <p class="form-footer">
+          Wrong account?
+          <a routerLink="/auth/register">Start over</a>
+        </p>
+
+      </ng-container>
 
     </div>
   </main>

@@ -1,4 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
+/* 2. ENSUITE TAILWIND */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 html, body { height: 100%; 
 }
@@ -1704,4 +1708,10 @@ td span {
 	.cta-card {
 		padding: 2.5rem 1.25rem;
 	}
+}
+
+/* 3. LE RESTE DE TON CODE */
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: #f8fafc;
 }

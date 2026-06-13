@@ -6,5 +6,6 @@ def calculate_days(start_date: datetime, end_date: datetime):
     return max(delta.days, 1)
 
 
+
 def calculate_price(days: int, price_per_day: float):
     return days * price_per_day

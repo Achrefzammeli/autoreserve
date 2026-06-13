@@ -1,0 +1,167 @@
+<div *ngIf="loading" class="min-h-screen flex items-center justify-center">
+  <p class="text-lg font-semibold">Loading vehicle...</p>
+</div>
+
+<div *ngIf="!loading && vehicle" class="min-h-screen bg-gray-50">
+
+  <div class="max-w-7xl mx-auto px-4 py-8">
+
+    <div class="page-nav">
+
+      <a routerLink="/fleet" class="back-link">
+
+        <span class="back-icon">
+          ←
+        </span>
+
+        <div>
+          <small>Return</small>
+          <strong>Fleet Vehicles</strong>
+        </div>
+
+      </a>
+
+    </div>
+    <div class="grid lg:grid-cols-2 gap-10 mobile-stack">
+
+      <!-- IMAGE -->
+
+      <div class="bg-white rounded-3xl overflow-hidden shadow-lg">
+
+      <img
+        [src]="vehicle.image_url ? 'http://localhost:8000' + vehicle.image_url : 'https://via.placeholder.com/1000x700'"
+        class="vehicle-image"
+        [alt]="vehicle.brand + ' ' + vehicle.model"
+      />
+
+      </div>
+
+      <!-- DETAILS -->
+
+      <div>
+
+        <div class="flex justify-between items-start mb-6">
+
+          <div>
+
+            <h1 class="text-5xl font-black text-gray-900">
+              {{ vehicle.brand }}
+            </h1>
+
+            <h2 class="text-3xl font-bold text-blue-600">
+              {{ vehicle.model }}
+            </h2>
+
+          </div>
+
+          <span
+            class="px-4 py-2 rounded-xl text-sm font-bold"
+            [ngClass]="{
+              'bg-green-100 text-green-700': vehicle.status === 'AVAILABLE',
+              'bg-yellow-100 text-yellow-700': vehicle.status === 'MAINTENANCE',
+              'bg-red-100 text-red-700': vehicle.status === 'UNAVAILABLE'
+            }"
+          >
+            {{ vehicle.status }}
+          </span>
+
+        </div>
+
+        <!-- PRICE -->
+
+        <div class="bg-white rounded-3xl p-6 shadow-md mb-6">
+
+          <p class="text-gray-500 mb-2">
+            Rental Price
+          </p>
+
+          <h3 class="text-4xl font-black text-blue-600">
+            {{ vehicle.price_per_day }} TND
+          </h3>
+
+          <p class="text-gray-400">
+            per day
+          </p>
+
+        </div>
+
+        <!-- SPECS -->
+
+        <div class="bg-white rounded-3xl p-6 shadow-md mb-6">
+
+          <h3 class="text-xl font-bold mb-4">
+            Vehicle Information
+          </h3>
+
+         <p class="text-gray-600 leading-relaxed">
+            {{
+              vehicle.specs ||
+              'No specifications provided for this vehicle.'
+            }}
+          </p>
+
+        </div>
+
+        <!-- BOOKING -->
+
+             <div class="booking-card bg-gray-900 rounded-3xl p-6 text-white shadow-xl">
+
+        <h3 class="text-xl font-bold mb-3">
+          Reserve this vehicle
+        </h3>
+
+        <form [formGroup]="bookingForm">
+
+          <div class="space-y-4">
+
+          <div class="field">
+            <label>Start Date</label>
+            <input
+              type="date"
+              formControlName="start_date"
+              class="booking-input"
+            />
+          </div>
+
+          <div class="field">
+            <label>End Date</label>
+            <input
+              type="date"
+              formControlName="end_date"
+              class="booking-input"
+            />
+          </div>
+
+          </div>
+
+          <div class="price-box mt-6 p-4 rounded-xl bg-white/10">
+
+            <p class="text-sm text-gray-300">
+              Estimated Price
+            </p>
+
+            <h2 class="estimated-price">
+              {{ totalPrice }} TND
+            </h2>
+
+          </div>
+
+        <button
+          type="button"
+          (click)="bookVehicle()"
+          [disabled]="bookingLoading || vehicle.status !== 'AVAILABLE'"
+          class="book-btn w-full mt-6 py-4 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white font-bold shadow-lg"
+        >
+          {{ bookingLoading ? 'Booking...' : 'Book Vehicle' }}
+        </button>
+        </form>
+
+      </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

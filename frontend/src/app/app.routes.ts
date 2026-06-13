@@ -26,7 +26,8 @@ import { Bookings as AdminBookings } from './features/admin/pages/bookings/booki
 
 import { authGuard } from './core/guards/core/guards/auth-guard';
 import { adminGuard } from './core/guards/core/guards/admin-guard';
-
+import { VehicleDetails } from './features/public/pages/vehicle-details/vehicle-details';
+import { CreateBooking } from './features/client/pages/create-booking/create-booking';
 export const routes: Routes = [
   {
     path: '',
@@ -34,6 +35,7 @@ export const routes: Routes = [
     children: [
       { path: '', component: Home },
       { path: 'fleet', component: Fleet },
+      { path: 'vehicles/:id', component: VehicleDetails },
       { path: 'about', component: About },
       { path: 'contact', component: Contact }
     ]
@@ -56,7 +58,8 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', component: ClientDashboard },
       { path: 'bookings', component: ClientBookings },
-      { path: 'profile', component: Profile }
+      { path: 'profile', component: Profile },
+      { path: 'bookings/create', component: CreateBooking }
     ]
   },
 

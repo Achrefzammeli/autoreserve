@@ -2,24 +2,22 @@ from pydantic import BaseModel
 
 
 class VehicleCreate(BaseModel):
-    brand: str
-    model: str
-    type: str
+    brand:         str
+    model:         str
     price_per_day: float
-    status: str = "AVAILABLE"
-    image_url: str | None = None
-    specs: str | None = None
+    status:        str = "AVAILABLE"
+    image_url:     str | None = None
+    specs:         str | None = None
 
 
 class VehicleOut(BaseModel):
-    id: int
-    brand: str
-    model: str
-    type: str
+    id:            int
+    brand:         str
+    model:         str
     price_per_day: float
-    status: str
-    image_url: str | None
-    specs: str | None
+    status:        str
+    image_url:     str | None
+    specs:         str | None
 
     class Config:
         from_attributes = True

@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
 import { VehicleService } from '../../../../core/services/vehicle.service';
-import { Vehicle, VehicleCreatePayload } from '../../../../core/models/vehicle.model';
+import { Vehicle, VehicleFormData } from '../../../../core/models/vehicle.model';
 
 @Component({
   selector: 'app-vehicles',
@@ -15,23 +15,28 @@ import { Vehicle, VehicleCreatePayload } from '../../../../core/models/vehicle.m
 })
 export class Vehicles implements OnInit {
 
-  private fb = inject(FormBuilder);
-  vehicles: Vehicle[] = [];
-  loading = false;
-  saving = false;
-  errorMessage = '';
+  private fb             = inject(FormBuilder);
+  private vehicleService = inject(VehicleService);
+
+  vehicles:     Vehicle[] = [];
+  loading       = false;
+  saving        = false;
+  errorMessage  = '';
+
+  // image upload
+  selectedImage  = signal<File | null>(null);
+  imagePreview   = signal<string | null>(null);
+
+  // edit mode
+  editingId      = signal<number | null>(null);
 
   form = this.fb.group({
-    brand: ['', [Validators.required]],
-    model: ['', [Validators.required]],
-    type: ['SUV', [Validators.required]],
+    brand:         ['', Validators.required],
+    model:         ['', Validators.required],
     price_per_day: [0, [Validators.required, Validators.min(1)]],
-    status: ['AVAILABLE', [Validators.required]],
-    image_url: [''],
-    specs: ['']
+    status:        ['AVAILABLE', Validators.required],
+    specs:         [''],
   });
-
-  constructor(private vehicleService: VehicleService) {}
 
   ngOnInit(): void {
     this.loadVehicles();
@@ -42,95 +47,113 @@ export class Vehicles implements OnInit {
     this.errorMessage = '';
 
     this.vehicleService.getAllVehicles().subscribe({
-      next: (vehicles) => {
-        this.vehicles = vehicles;
-        this.loading = false;
-      },
-      error: () => {
-        this.errorMessage = 'Impossible de charger les véhicules.';
-        this.loading = false;
-      }
+      next:  (v) => { this.vehicles = v; this.loading = false; },
+      error: ()  => { this.errorMessage = 'Failed to load vehicles.'; this.loading = false; }
     });
   }
 
+  // ── Image picker ─────────────────────────────────────────────────
+
+  onImagePicked(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    this.selectedImage.set(file);
+    const reader = new FileReader();
+    reader.onload = () => this.imagePreview.set(reader.result as string);
+    reader.readAsDataURL(file);
+  }
+
+  clearImage(): void {
+    this.selectedImage.set(null);
+    this.imagePreview.set(null);
+  }
+
+  // ── Submit (create or update) ─────────────────────────────────────
+
   submit(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
+    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
 
     this.saving = true;
+    this.errorMessage = '';
 
-    const payload = this.buildPayload();
+    const raw = this.form.getRawValue();
 
-    this.vehicleService.createVehicle(payload).subscribe({
+    const payload: VehicleFormData = {
+      brand:         raw.brand ?? '',
+      model:         raw.model ?? '',
+      price_per_day: Number(raw.price_per_day ?? 0),
+      status:        (raw.status ?? 'AVAILABLE') as VehicleFormData['status'],
+      specs:         raw.specs?.trim() || null,
+      image:         this.selectedImage(),
+    };
+
+    const request$ = this.editingId()
+      ? this.vehicleService.updateVehicle(this.editingId()!, payload)
+      : this.vehicleService.createVehicle(payload);
+
+    request$.subscribe({
       next: () => {
-        this.form.reset({
-          brand: '',
-          model: '',
-          type: 'SUV',
-          price_per_day: 0,
-          status: 'AVAILABLE',
-          image_url: '',
-          specs: ''
-        });
+        this.resetForm();
         this.saving = false;
         this.loadVehicles();
       },
       error: () => {
-        this.errorMessage = 'Impossible de créer le véhicule.';
+        this.errorMessage = 'Failed to save vehicle.';
         this.saving = false;
       }
     });
   }
 
-  deleteVehicle(vehicleId: number): void {
-    const confirmed = window.confirm('Supprimer ce véhicule ?');
+  // ── Edit ──────────────────────────────────────────────────────────
 
-    if (!confirmed) {
-      return;
-    }
+  editVehicle(v: Vehicle): void {
+    this.editingId.set(v.id);
+    this.form.patchValue({
+      brand:         v.brand,
+      model:         v.model,
+      price_per_day: v.price_per_day,
+      status:        v.status,
+      specs:         v.specs ?? '',
+    });
+    // show existing image as preview
+    this.imagePreview.set(v.image_url ? `http://localhost:8000${v.image_url}` : null);
+    this.selectedImage.set(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
-    this.vehicleService.deleteVehicle(vehicleId).subscribe({
-      next: () => this.loadVehicles(),
-      error: () => {
-        this.errorMessage = 'Impossible de supprimer ce véhicule.';
-      }
+  cancelEdit(): void {
+    this.resetForm();
+  }
+
+  // ── Delete ────────────────────────────────────────────────────────
+
+  deleteVehicle(id: number): void {
+    if (!window.confirm('Delete this vehicle?')) return;
+
+    this.vehicleService.deleteVehicle(id).subscribe({
+      next:  () => this.loadVehicles(),
+      error: () => { this.errorMessage = 'Failed to delete vehicle.'; }
     });
   }
 
-  get availableCount(): number {
-    return this.vehicles.filter((vehicle) => vehicle.status === 'AVAILABLE').length;
+  // ── Helpers ───────────────────────────────────────────────────────
+
+  private resetForm(): void {
+    this.form.reset({ brand: '', model: '', price_per_day: 0, status: 'AVAILABLE', specs: '' });
+    this.selectedImage.set(null);
+    this.imagePreview.set(null);
+    this.editingId.set(null);
   }
 
-  get maintenanceCount(): number {
-    return this.vehicles.filter((vehicle) => vehicle.status === 'MAINTENANCE').length;
+  get availableCount():    number { return this.vehicles.filter(v => v.status === 'AVAILABLE').length; }
+  get maintenanceCount():  number { return this.vehicles.filter(v => v.status === 'MAINTENANCE').length; }
+  get unavailableCount():  number { return this.vehicles.filter(v => v.status === 'UNAVAILABLE').length; }
+
+  statusLabel(status: string): string { return status.replace('_', ' '); }
+  statusClass(status: string): string { return `vehicle-status--${status.toLowerCase()}`; }
+
+  imageUrl(v: Vehicle): string | null {
+    if (!v.image_url) return null;
+    return v.image_url.startsWith('http') ? v.image_url : `http://localhost:8000${v.image_url}`;
   }
-
-  get unavailableCount(): number {
-    return this.vehicles.filter((vehicle) => vehicle.status === 'UNAVAILABLE').length;
-  }
-
-  statusLabel(status: Vehicle['status']): string {
-    return status.replace('_', ' ');
-  }
-
-  statusClass(status: Vehicle['status']): string {
-    return `vehicle-status--${status.toLowerCase()}`;
-  }
-
-  private buildPayload(): VehicleCreatePayload {
-    const rawValue = this.form.getRawValue();
-
-    return {
-      brand: rawValue.brand ?? '',
-      model: rawValue.model ?? '',
-      type: rawValue.type ?? 'SUV',
-      price_per_day: Number(rawValue.price_per_day ?? 0),
-      status: (rawValue.status ?? 'AVAILABLE') as VehicleCreatePayload['status'],
-      image_url: rawValue.image_url?.trim() ? rawValue.image_url.trim() : null,
-      specs: rawValue.specs?.trim() ? rawValue.specs.trim() : null
-    };
-  }
-
 }

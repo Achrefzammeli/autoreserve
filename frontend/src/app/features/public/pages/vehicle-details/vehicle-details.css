@@ -1,0 +1,292 @@
+/* Container */
+
+:host {
+  display: block;
+}
+
+/* Image */
+
+.vehicle-image {
+  width: 100%;
+  height: 500px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Inputs */
+
+input[type="datetime-local"] {
+  width: 100%;
+  border: none;
+  outline: none;
+  border-radius: 16px;
+  padding: 14px 16px;
+  font-size: 15px;
+  color: #111827;
+  background: white;
+  transition: all .2s ease;
+}
+
+input[type="datetime-local"]:focus {
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, .2);
+}
+
+/* Booking card */
+
+.booking-card {
+  backdrop-filter: blur(10px);
+}
+
+.booking-card label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* Price */
+
+.price-box {
+  border: 1px solid rgba(255,255,255,.08);
+  transition: all .2s ease;
+}
+
+.price-box:hover {
+  transform: translateY(-2px);
+}
+
+/* Button */
+
+.book-btn {
+  transition: all .25s ease;
+}
+
+.book-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.book-btn:active:not(:disabled) {
+  transform: scale(.98);
+}
+
+.book-btn:disabled {
+  opacity: .6;
+}
+
+/* Specs text */
+
+.specs-text {
+  line-height: 1.8;
+}
+
+/* Mobile */
+
+@media (max-width: 768px) {
+
+  h1 {
+    font-size: 2rem !important;
+    line-height: 1.1;
+  }
+
+  h2 {
+    font-size: 1.4rem !important;
+  }
+
+  .mobile-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .vehicle-image {
+    height: 260px;
+  }
+
+  .booking-card {
+    position: static !important;
+    margin-top: 1rem;
+  }
+
+  .price-box h2 {
+    font-size: 2rem !important;
+  }
+
+  button {
+    min-height: 52px;
+  }
+}
+
+/* iPhone 14 Pro */
+
+@media screen and (max-width: 430px) {
+
+  .vehicle-image {
+    height: 220px;
+  }
+
+  h1 {
+    font-size: 1.8rem !important;
+  }
+
+  h2 {
+    font-size: 1.25rem !important;
+  }
+
+  .bg-white.rounded-3xl,
+  .bg-gray-900.rounded-3xl {
+    border-radius: 1.5rem !important;
+  }
+
+  .max-w-7xl {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  input[type="datetime-local"] {
+    font-size: 14px;
+    padding: 12px;
+  }
+}
+
+/* Smooth animation */
+
+.bg-white,
+.bg-gray-900 {
+  transition: all .25s ease;
+}
+
+.shadow-lg,
+.shadow-md {
+  transition: all .25s ease;
+}
+
+.shadow-lg:hover,
+.shadow-md:hover {
+  transform: translateY(-3px);
+}
+input[type="datetime-local"] {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+@media (max-width: 430px) {
+  input[type="datetime-local"] {
+    font-size: 13px;
+    padding: 12px;
+  }
+}
+.booking-input {
+  width: 100%;
+  background: white;
+  color: #111827;
+  border-radius: 16px;
+  padding: 14px;
+  border: none;
+  outline: none;
+}
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .75rem;
+
+  background: white;
+  padding: .9rem 1.3rem;
+
+  border-radius: 999px;
+
+  text-decoration: none;
+  color: #111827;
+
+  font-weight: 600;
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.08);
+
+  transition: all .25s ease;
+}
+
+.back-btn:hover {
+  transform: translateY(-2px);
+  color: #2563eb;
+  box-shadow:
+    0 15px 35px rgba(37,99,235,.15);
+}
+.estimated-price {
+  font-size: 2.3rem;
+  font-weight: 900;
+  color: #60a5fa;
+}
+@media (max-width: 430px) {
+
+  .booking-card {
+    padding: 1.25rem;
+  }
+
+  .back-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .estimated-price {
+    font-size: 1.9rem;
+  }
+
+  .vehicle-image {
+    height: 240px;
+  }
+}.page-nav {
+  margin-bottom: 2rem;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+
+  padding: 14px 20px;
+
+  background: white;
+
+  border-radius: 18px;
+
+  text-decoration: none;
+
+  box-shadow:
+    0 8px 25px rgba(0,0,0,.08);
+
+  transition: .25s;
+}
+
+.back-link:hover {
+  transform: translateY(-2px);
+}
+
+.back-icon {
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #2563eb;
+
+  color: white;
+
+  font-size: 18px;
+}
+
+.back-link small {
+  display: block;
+  color: #6b7280;
+}
+
+.back-link strong {
+  color: #111827;
+}

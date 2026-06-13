@@ -12,8 +12,12 @@ export class BookingService {
   constructor(private http: HttpClient) {}
 
   createBooking(data: any) {
-    return this.http.post(`${this.api}/bookings`, data);
+    return this.http.post(
+      `${this.api}/bookings/`,
+      data
+    );
   }
+
 
   myBookings() {
     return this.http.get(`${this.api}/bookings/my`);

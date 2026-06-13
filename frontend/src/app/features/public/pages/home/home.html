@@ -18,97 +18,58 @@
 				</p>
 			</div>
 
-			<div class="search-card glass-card">
-				<div class="search-grid">
-					<label class="search-field">
-						<span>Pickup location</span>
-						<div class="search-field__control">
-							<span class="material-symbols-outlined">location_on</span>
-							<input type="text" placeholder="City or Airport" />
-						</div>
-					</label>
+<form
+  class="search-card glass-card"
+  [formGroup]="searchForm"
+  (ngSubmit)="searchVehicles()"
+>
 
-					<label class="search-field">
-						<span>Vehicle type</span>
-						<div class="search-field__control">
-							<span class="material-symbols-outlined">directions_car</span>
-							<select>
-								<option>All Categories</option>
-								<option>SUV</option>
-								<option>Sedan</option>
-								<option>Electric</option>
-							</select>
-						</div>
-					</label>
-				</div>
+  <div class="search-grid">
 
-				<div class="search-grid">
-					<label class="search-field">
-						<span>Pickup date & time</span>
-						<div class="search-field__control">
-							<span class="material-symbols-outlined">calendar_today</span>
-							<input type="datetime-local" />
-						</div>
-					</label>
+    <label class="search-field">
 
-					<label class="search-field">
-						<span>Return date & time</span>
-						<div class="search-field__control">
-							<span class="material-symbols-outlined">event_repeat</span>
-							<input type="datetime-local" />
-						</div>
-					</label>
-				</div>
+      <span>Pickup date & time</span>
 
-				<button type="button" class="primary-action">Search Available Vehicles</button>
-			</div>
-		</div>
-	</section>
+      <div class="search-field__control">
+        <span class="material-symbols-outlined">
+          calendar_today
+        </span>
 
-	<section class="section section--featured">
-		<div class="section__header">
-			<div>
-				<h2>Featured Collections</h2>
-				<p>
-					Curated vehicle categories tailored for every professional journey, from executive
-					travel to rugged exploration.
-				</p>
-			</div>
+        <input
+          type="datetime-local"
+          formControlName="start_date"
+        />
+      </div>
 
-			<div class="section__arrows">
-				<button type="button" aria-label="Previous collection">
-					<span class="material-symbols-outlined">arrow_back</span>
-				</button>
-				<button type="button" aria-label="Next collection">
-					<span class="material-symbols-outlined">arrow_forward</span>
-				</button>
-			</div>
-		</div>
+    </label>
 
-		<div class="collection-grid">
-			<article class="collection-card collection-card--suv">
-				<div class="collection-card__overlay"></div>
-				<div class="collection-card__content">
-					<span>08 Available</span>
-					<h3>Luxury SUVs</h3>
-				</div>
-			</article>
+    <label class="search-field">
 
-			<article class="collection-card collection-card--sedan">
-				<div class="collection-card__overlay"></div>
-				<div class="collection-card__content">
-					<span>12 Available</span>
-					<h3>Executive Sedans</h3>
-				</div>
-			</article>
+      <span>Return date & time</span>
 
-			<article class="collection-card collection-card--electric">
-				<div class="collection-card__overlay"></div>
-				<div class="collection-card__content">
-					<span>15 Available</span>
-					<h3>Pure Electric</h3>
-				</div>
-			</article>
+      <div class="search-field__control">
+        <span class="material-symbols-outlined">
+          event_repeat
+        </span>
+
+        <input
+          type="datetime-local"
+          formControlName="end_date"
+        />
+      </div>
+
+    </label>
+
+  </div>
+
+  <button
+    type="submit"
+    class="primary-action"
+  >
+    Search Available Vehicles
+  </button>
+
+</form>
 		</div>
 	</section>
 
@@ -141,14 +102,6 @@
 					</p>
 				</article>
 
-				<article class="benefit-card">
-					<div class="benefit-card__icon"><span class="material-symbols-outlined">security</span></div>
-					<h3>Tier-1 Security</h3>
-					<p>
-						Advanced telemetry and encryption ensure your journey and data are protected at all
-						times.
-					</p>
-				</article>
 			</div>
 		</div>
 	</section>

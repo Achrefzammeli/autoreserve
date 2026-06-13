@@ -24,8 +24,21 @@ def create_booking(
 
     if vehicle.status != "AVAILABLE":
         raise HTTPException(status_code=400, detail="Vehicle not available")
+    existing_booking = db.query(Booking).filter(
+    Booking.vehicle_id == booking.vehicle_id,
+    Booking.status != "CANCELLED",
+    Booking.start_date <= booking.end_date,
+    Booking.end_date >= booking.start_date
+    ).first()
+
+    if existing_booking:
+        raise HTTPException(
+            status_code=400,
+            detail="Vehicle already booked for selected dates"
+        )
 
     days = calculate_days(booking.start_date, booking.end_date)
+    
     total_price = calculate_price(days, vehicle.price_per_day)
 
     new_booking = Booking(

@@ -1,24 +1,124 @@
-<nav class="public-nav">
-  <a class="public-nav__brand" routerLink="/">
-    <span class="public-nav__mark">AR</span>
-    <span>AutoReserve</span>
-  </a>
+<!-- =========================================================================
+     BARRE DE NAVIGATION AVEC INTÉGRATION LOGO (navbar.html)
+     ========================================================================= -->
+<nav class="fixed top-0 w-full z-50 bg-black border-b border-[#282828] h-16 flex items-center">
+  <div class="max-w-[1200px] w-full mx-auto px-6 flex justify-between items-center">
+    
+    <!-- Groupe Gauche : Logo Image + Liens Desktop -->
+    <div class="flex items-center gap-8">
+      <!-- Logo Intégré (Utilise l'image directement comme marqueur de marque) -->
+      <a routerLink="/" class="flex items-center h-16 select-none py-2">
+        <!-- L'image contenant déjà le texte "AUTORESERVE", elle se suffit à elle-même -->
+        <img src="https://github.com/Achrefzammeli/autoreserve/blob/main/frontend/logocar.jfif" 
+             alt="AutoReserve Logo" 
+             class="h-full w-auto object-contain mix-blend-screen scale-125 origin-left transition-transform hover:scale-130" />
+      </a>
 
-  <div class="public-nav__links">
-    <a routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }">Explore</a>
-    <a routerLink="/fleet" routerLinkActive="is-active">Manage Fleet</a>
-    <a routerLink="/about" routerLinkActive="is-active">Solutions</a>
-  </div>
+      <!-- Liens Navigation (Desktop) - Textes en blanc/gris clair pour le thème sombre -->
+      <div class="hidden md:flex items-center gap-6">
+        <a routerLink="/" 
+           routerLinkActive="text-white font-medium" 
+           [routerLinkActiveOptions]="{exact: true}" 
+           class="text-[14px] font-medium text-[#afafaf] hover:text-white transition-colors py-2">
+          Accueil
+        </a>
+        <a routerLink="/fleet" 
+           routerLinkActive="text-white font-medium" 
+           class="text-[14px] font-medium text-[#afafaf] hover:text-white transition-colors py-2">
+          Notre Flotte
+        </a>
+        <a *ngIf="isLoggedIn" 
+           routerLink="/admin/dashboard" 
+           routerLinkActive="text-white font-medium" 
+           class="text-[14px] font-medium text-[#afafaf] hover:text-white transition-colors py-2">
+          Tableau de bord
+        </a>
+      </div>
+    </div>
 
-  <div class="public-nav__actions">
-    <a routerLink="/auth/login" class="public-nav__icon" aria-label="Notifications">
-      <span class="material-symbols-outlined">notifications</span>
-    </a>
-    <a routerLink="/auth/login" class="public-nav__icon" aria-label="Help">
-      <span class="material-symbols-outlined">help</span>
-    </a>
-    <a routerLink="/auth/login" class="public-nav__avatar" aria-label="User profile">
-      <span>U</span>
-    </a>
+    <!-- Groupe Droite : Actions / Profil (Desktop) -->
+    <div class="hidden md:flex items-center gap-3">
+      
+      <!-- CAS : Déconnecté -->
+      <ng-container *ngIf="!isLoggedIn">
+        <a routerLink="/auth/login" 
+           class="text-[14px] font-medium text-white px-4 py-2 hover:bg-[#282828] rounded-full transition-colors">
+          Connexion
+        </a>
+        <!-- Bouton blanc contrasté pour l'action principale sur fond noir -->
+        <a routerLink="/auth/register" 
+           class="bg-white text-black text-[14px] font-semibold px-5 py-2 rounded-full hover:bg-[#efefef] transition-colors">
+          S'inscrire
+        </a>
+      </ng-container>
+
+      <!-- CAS : Connecté -->
+      <ng-container *ngIf="isLoggedIn">
+        <button class="w-10 h-10 flex items-center justify-center text-white hover:bg-[#282828] rounded-full transition-colors">
+          <span class="material-symbols-outlined text-[22px]">notifications</span>
+        </button>
+        
+        <div class="flex items-center gap-3 pl-3 border-l border-[#282828]">
+          <a routerLink="/profile" 
+             class="w-9 h-9 bg-white text-black flex items-center justify-center rounded-full text-[14px] font-bold tracking-tight">
+            U
+          </a>
+          <button (click)="logout()" 
+                  class="text-[12px] text-[#afafaf] font-medium hover:text-white hover:underline transition-colors">
+            Déconnexion
+          </button>
+        </div>
+      </ng-container>
+    </div>
+
+    <!-- Bouton Menu Mobile (Hamburger) -->
+    <button (click)="toggleMobileMenu()" 
+            class="md:hidden p-2 text-white hover:bg-[#282828] rounded-full transition-colors flex items-center justify-center">
+      <span class="material-symbols-outlined text-[24px]">
+        {{ mobileMenuOpen ? 'close' : 'menu' }}
+      </span>
+    </button>
+
   </div>
 </nav>
+
+<!-- Menu Mobile Sombre -->
+<div *ngIf="mobileMenuOpen" 
+     class="md:hidden fixed top-16 left-0 w-full h-[calc(100vh-4rem)] bg-black z-40 px-6 py-6 flex flex-col justify-between animate-fade-in">
+  
+  <div class="flex flex-col gap-5">
+    <a routerLink="/" (click)="toggleMobileMenu()" class="text-[20px] font-bold text-white py-1">
+      Accueil
+    </a>
+    <a routerLink="/fleet" (click)="toggleMobileMenu()" class="text-[20px] font-bold text-white py-1">
+      Notre Flotte
+    </a>
+    <a *ngIf="isLoggedIn" routerLink="/admin/dashboard" (click)="toggleMobileMenu()" class="text-[20px] font-bold text-white py-1">
+      Tableau de bord
+    </a>
+    <a *ngIf="isLoggedIn" routerLink="/profile" (click)="toggleMobileMenu()" class="text-[20px] font-bold text-white py-1">
+      Mon Profil
+    </a>
+  </div>
+
+  <div class="border-t border-[#282828] pt-6 pb-8 flex flex-col gap-3">
+    <ng-container *ngIf="!isLoggedIn">
+      <a routerLink="/auth/login" (click)="toggleMobileMenu()" 
+         class="w-full bg-[#282828] text-white text-[16px] font-medium py-3 rounded-full text-center">
+        Connexion
+      </a>
+      <a routerLink="/auth/register" (click)="toggleMobileMenu()" 
+         class="w-full bg-white text-black text-[16px] font-semibold py-3 rounded-full text-center">
+        S'inscrire
+      </a>
+    </ng-container>
+
+    <button *ngIf="isLoggedIn" (click)="logout(); toggleMobileMenu()" 
+            class="w-full bg-[#282828] text-red-500 text-[16px] font-medium py-3 rounded-full text-center">
+      Déconnexion
+    </button>
+  </div>
+</div>
+
+<!-- Spacer pour éviter la superposition de contenu sous la navbar -->
+<div class="h-16"></div>

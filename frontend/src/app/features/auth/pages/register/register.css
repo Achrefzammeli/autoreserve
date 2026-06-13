@@ -367,3 +367,19 @@
   .field-row { grid-template-columns: 1fr; }
   .card-header h1 { font-size: 1.6rem; }
 }
+.skip-btn {
+  display: block;
+  width: 100%;
+  margin-top: 0.75rem;
+  padding: 0.85rem;
+  background: none;
+  border: none;
+  color: #75777e;
+  font-family: system-ui, sans-serif;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-align: center;
+  transition: color 150ms;
+}
+
+.skip-btn:hover { color: #44474d; text-decoration: underline; }
