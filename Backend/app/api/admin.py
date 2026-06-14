@@ -139,22 +139,23 @@ def get_reports(
     db: Session = Depends(get_db),
     admin=Depends(require_role("ADMIN"))
 ):
-    # Revenue by vehicle type
+    from collections import defaultdict
+
     vehicles = db.query(Vehicle).all()
     bookings = db.query(Booking).filter(Booking.status.in_(["CONFIRMED", "PENDING"])).all()
 
     vehicle_map = {v.id: v for v in vehicles}
 
-    revenue_by_type: dict = {}
-    bookings_by_type: dict = {}
+    revenue_by_brand: dict = {}
+    bookings_by_brand: dict = {}
 
     for b in bookings:
         v = vehicle_map.get(b.vehicle_id)
         if not v:
             continue
-        vtype = v.type
-        revenue_by_type[vtype] = revenue_by_type.get(vtype, 0) + b.total_price
-        bookings_by_type[vtype] = bookings_by_type.get(vtype, 0) + 1
+        key = v.brand
+        revenue_by_brand[key] = revenue_by_brand.get(key, 0) + b.total_price
+        bookings_by_brand[key] = bookings_by_brand.get(key, 0) + 1
 
     # Top vehicles by bookings
     vehicle_booking_count: dict = {}
@@ -170,13 +171,10 @@ def get_reports(
                 "vehicle_id": vid,
                 "brand": v.brand,
                 "model": v.model,
-                "type": v.type,
                 "bookings_count": count
             })
 
-    # Monthly revenue (current year)
-    from collections import defaultdict
-    from datetime import datetime
+    # Monthly revenue
     monthly: dict = defaultdict(float)
     for b in db.query(Booking).filter(Booking.status.in_(["CONFIRMED", "PENDING"])).all():
         key = b.start_date.strftime("%Y-%m")
@@ -185,8 +183,8 @@ def get_reports(
     monthly_sorted = [{"month": k, "revenue": round(v, 2)} for k, v in sorted(monthly.items())]
 
     return {
-        "revenue_by_type": [{"type": k, "revenue": round(v, 2)} for k, v in revenue_by_type.items()],
-        "bookings_by_type": [{"type": k, "count": v} for k, v in bookings_by_type.items()],
+        "revenue_by_type": [{"type": k, "revenue": round(v, 2)} for k, v in revenue_by_brand.items()],
+        "bookings_by_type": [{"type": k, "count": v} for k, v in bookings_by_brand.items()],
         "top_vehicles": top_vehicles_out,
         "monthly_revenue": monthly_sorted,
     }
