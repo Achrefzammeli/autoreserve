@@ -192,7 +192,9 @@
               <td><span class="sub">#{{ b.id }}</span></td>
               <td>
                 <strong>{{ b.customer_name ?? '—' }}</strong>
-                <span class="sub">{{ b.customer_email ?? '' }}</span>
+                <span class="sub">
+  {{ b.customer_name }}
+</span>
               </td>
               <td>
                 <strong>{{ b.vehicle_brand }} {{ b.vehicle_model }}</strong>

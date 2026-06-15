@@ -4,18 +4,46 @@ import { environment } from '../../../environments/environment';
 
 export interface AdminBooking {
   id: number;
-  user_id: number;
+
+  customer_id: number;
   vehicle_id: number;
+
   start_date: string;
   end_date: string;
+
   total_price: number;
   status: string;
+
   customer_name: string | null;
-  customer_email: string | null;
   vehicle_brand: string | null;
   vehicle_model: string | null;
 }
+export interface Customer {
+  id: number;
+  full_name: string;
+  cin: string;
+  phone: string;
+  email?: string;
+  address?: string;
 
+  bookings_count: number;
+  total_revenue: number;
+  last_booking: string | null;
+}
+export interface AdminCustomer {
+  id: number;
+
+  full_name: string;
+  cin: string;
+  phone: string;
+
+  email?: string;
+  address?: string;
+
+  bookings_count: number;
+  total_revenue: number;
+  last_booking: string | null;
+}
 export interface AdminStats {
   bookings: { total: number; confirmed: number; pending: number; cancelled: number };
   revenue: { total: number };
@@ -73,4 +101,43 @@ export class AdminService {
   getReports() {
     return this.http.get<AdminReports>(`${this.api}/admin/reports`);
   }
+ 
+getCustomers() {
+  return this.http.get<Customer[]>(
+    `${this.api}/customers`
+  );
+}
+
+getCustomer(id: number) {
+  return this.http.get<Customer>(
+    `${this.api}/customers/${id}`
+  );
+}
+
+createCustomer(payload: any) {
+  return this.http.post(
+    `${this.api}/customers`,
+    payload
+  );
+}
+
+updateCustomer(id: number, payload: any) {
+  return this.http.put(
+    `${this.api}/customers/${id}`,
+    payload
+  );
+}
+
+deleteCustomer(id: number) {
+  return this.http.delete(
+    `${this.api}/customers/${id}`
+  );
+}
+createBooking(payload: any) {
+  return this.http.post(`${this.api}/admin/bookings`, payload);
+}
+getVehicles() {
+  return this.http.get<any[]>(`${this.api}/vehicles`);}
+getVehicleCalendar(vehicleId: number) {
+  return this.http.get<any[]>(`${this.api}/vehicles/${vehicleId}/calendar`);}
 }

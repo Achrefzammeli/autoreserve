@@ -3,12 +3,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from fastapi.staticfiles import StaticFiles
 
-from app.api import auth, admin, vehicles, bookings, totp
+from app.api import auth, admin, vehicles, bookings, totp, customers
 from app.database.database import Base, engine
 from app.database.init_db import init_admin_user
 
 # Import explicite de tous les modèles pour que Base les connaisse
-from app.models import user, vehicle, booking  # <-- AJOUTE CETTE LIGNE
+from app.models import user, vehicle, booking , customer # <-- AJOUTE CETTE LIGNE
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -37,6 +37,7 @@ app.include_router(admin.router)
 app.include_router(vehicles.router)
 app.include_router(bookings.router)
 app.include_router(totp.router)
+app.include_router(customers.router)
 
 @app.get("/")
 def root():

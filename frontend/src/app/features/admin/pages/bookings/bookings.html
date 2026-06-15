@@ -1,139 +1,212 @@
 <div class="bookings-page">
+  <!-- HEADER -->
   <header class="page-header">
-    <div>
-      <span class="eyebrow">Admin / Bookings</span>
+    <div class="header-info">
+      <span class="eyebrow">ADMIN / BOOKINGS</span>
       <h1>Bookings management</h1>
-      <p>Review, confirm, or cancel customer reservations.</p>
+      <p>Create and manage reservations manually</p>
     </div>
-    <div class="page-header__actions">
-      <button type="button" class="action-pill action-pill--ghost" (click)="loadBookings()">
-        <span class="material-symbols-outlined">refresh</span>
-        Refresh
-      </button>
-    </div>
+
+    <button class="action-pill primary-btn" (click)="openCreateForm()">
+      <span class="material-symbols-outlined">add</span>
+      New Booking
+    </button>
   </header>
 
-  <!-- Summary cards -->
+  <!-- SUMMARY STATS -->
   <section class="summary-grid">
-    <article class="summary-card summary-card--accent">
-      <span class="material-symbols-outlined">calendar_month</span>
-      <div>
-        <small>Total bookings</small>
+    <article class="summary-card">
+      <div class="card-icon-wrapper">
+        <span class="material-symbols-outlined">calendar_month</span>
+      </div>
+      <div class="card-content">
+        <small>Total</small>
         <strong>{{ bookings.length }}</strong>
       </div>
     </article>
+
     <article class="summary-card">
-      <span class="material-symbols-outlined">schedule</span>
-      <div>
+      <div class="card-icon-wrapper pending-icon">
+        <span class="material-symbols-outlined">schedule</span>
+      </div>
+      <div class="card-content">
         <small>Pending</small>
         <strong>{{ pendingCount }}</strong>
       </div>
     </article>
+
     <article class="summary-card">
-      <span class="material-symbols-outlined">check_circle</span>
-      <div>
+      <div class="card-icon-wrapper confirmed-icon">
+        <span class="material-symbols-outlined">check_circle</span>
+      </div>
+      <div class="card-content">
         <small>Confirmed</small>
         <strong>{{ confirmedCount }}</strong>
       </div>
     </article>
-    <article class="summary-card">
-      <span class="material-symbols-outlined">payments</span>
-      <div>
-        <small>Total revenue</small>
+
+    <article class="summary-card revenue-card">
+      <div class="card-icon-wrapper revenue-icon">
+        <span class="material-symbols-outlined">payments</span>
+      </div>
+      <div class="card-content">
+        <small>Revenue</small>
         <strong>{{ totalRevenue | currency:'USD':'symbol':'1.0-0' }}</strong>
       </div>
     </article>
   </section>
 
-  <!-- Filter pills -->
-  <div class="filter-bar">
-    <button
-      *ngFor="let f of filters"
-      type="button"
-      class="filter-pill"
-      [class.is-active]="activeFilter === f"
-      (click)="applyFilter(f)">
-      {{ f }}
-    </button>
+  <!-- FILTERS -->
+  <div class="filter-container">
+    <div class="filter-bar">
+      <button
+        *ngFor="let f of filters"
+        class="filter-pill"
+        [class.is-active]="activeFilter === f"
+        (click)="applyFilter(f)">
+        {{ f }}
+      </button>
+    </div>
   </div>
 
-  <!-- Error -->
-  <p class="error-banner" *ngIf="errorMessage">{{ errorMessage }}</p>
+  <p class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</p>
 
-  <!-- Loading -->
-  <div class="empty-state" *ngIf="loading">
-    <span class="material-symbols-outlined spin">autorenew</span>
-    <p>Loading bookings...</p>
-  </div>
+  <!-- BOOKINGS LIST (Mobile Card Style) -->
+  <div class="bookings-list" *ngIf="!loading">
+    <div *ngIf="filtered.length; else emptyState">
+      <div class="booking-card" *ngFor="let b of filtered">
+        <div class="card-header">
+          <span class="booking-id">#{{ b.id }}</span>
+          <span class="chip" [ngClass]="statusClass(b.status)">{{ b.status }}</span>
+        </div>
 
-  <!-- Table -->
-  <article class="panel" *ngIf="!loading">
-    <div class="table-wrap" *ngIf="filtered.length; else emptyState">
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Customer</th>
-            <th>Vehicle</th>
-            <th>Dates</th>
-            <th class="text-right">Amount</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let booking of filtered">
-            <td><span class="booking-id">#{{ booking.id }}</span></td>
-            <td>
-              <strong>{{ booking.customer_name ?? '—' }}</strong>
-              <span class="sub">{{ booking.customer_email ?? '' }}</span>
-            </td>
-            <td>
-              <strong>{{ booking.vehicle_brand }} {{ booking.vehicle_model }}</strong>
-            </td>
-            <td>
-              <strong>{{ booking.start_date | date:'MMM d' }} – {{ booking.end_date | date:'MMM d, y' }}</strong>
-            </td>
-            <td class="text-right">
-              <strong>{{ booking.total_price | currency:'USD':'symbol':'1.0-0' }}</strong>
-            </td>
-            <td>
-              <span class="chip" [ngClass]="statusClass(booking.status)">
-                {{ booking.status }}
-              </span>
-            </td>
-            <td>
-              <div class="action-group" *ngIf="updatingId !== booking.id; else updating">
-                <button
-                  *ngIf="booking.status !== 'CONFIRMED'"
-                  type="button"
-                  class="action-pill action-pill--xs action-pill--confirm"
-                  (click)="updateStatus(booking, 'CONFIRMED')">
-                  Confirm
-                </button>
-                <button
-                  *ngIf="booking.status !== 'CANCELLED'"
-                  type="button"
-                  class="action-pill action-pill--xs action-pill--cancel"
-                  (click)="updateStatus(booking, 'CANCELLED')">
-                  Cancel
-                </button>
-              </div>
-              <ng-template #updating>
-                <span class="sub">Updating...</span>
-              </ng-template>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+        <div class="card-body">
+          <div class="customer-info">
+            <span class="material-symbols-outlined">person</span>
+            <strong>{{ b.customer_name }}</strong>
+          </div>
+          <div class="vehicle-info">
+            <span class="material-symbols-outlined">directions_car</span>
+            <span>{{ b.vehicle_brand }} {{ b.vehicle_model }}</span>
+          </div>
+          <div class="date-info">
+            <span class="material-symbols-outlined">calendar_today</span>
+            <span>{{ b.start_date | date:'MMM d' }} → {{ b.end_date | date:'MMM d' }}</span>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <div class="price-info">
+            <span class="price-label">Total Price</span>
+            <span class="price-value">{{ b.total_price | currency }}</span>
+          </div>
+          
+          <div class="card-actions">
+            <button class="btn-icon confirm" 
+                    *ngIf="b.status !== 'CONFIRMED'"
+                    (click)="updateStatus(b,'CONFIRMED')"
+                    [disabled]="updatingId === b.id">
+              <span class="material-symbols-outlined">done</span>
+              Confirm
+            </button>
+            <button class="btn-icon cancel" 
+                    *ngIf="b.status !== 'CANCELLED'"
+                    (click)="updateStatus(b,'CANCELLED')"
+                    [disabled]="updatingId === b.id">
+              <span class="material-symbols-outlined">close</span>
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <ng-template #emptyState>
-      <div class="empty-state">
-        <span class="material-symbols-outlined">calendar_month</span>
-        <h3>No bookings found</h3>
-        <p>No bookings match the selected filter.</p>
+      <div class="empty-view">
+        <span class="material-symbols-outlined">search_off</span>
+        <p>No bookings found for this filter</p>
       </div>
     </ng-template>
-  </article>
+  </div>
+
+  <div class="loader" *ngIf="loading">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- DRAWER OVERLAY -->
+  <div class="drawer-overlay" [class.active]="showForm" (click)="closeForm()"></div>
+
+  <!-- NEW BOOKING DRAWER -->
+  <aside class="booking-drawer" [class.open]="showForm">
+    <header class="drawer-header">
+      <div class="header-content">
+        <h2>New Booking</h2>
+        <p>Enter reservation details</p>
+      </div>
+      <button class="close-btn" (click)="closeForm()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+
+    <div class="drawer-body">
+      <div class="form-group">
+        <label>Customer</label>
+        <div class="select-wrapper">
+          <select [(ngModel)]="bookingForm.customer_id">
+            <option [ngValue]="null">Select Customer</option>
+            <option *ngFor="let c of customers" [value]="c.id">{{ c.full_name }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Vehicle</label>
+        <div class="select-wrapper">
+          <select [(ngModel)]="bookingForm.vehicle_id">
+            <option [ngValue]="null">Select Vehicle</option>
+            <option *ngFor="let v of vehicles"
+                    [value]="v.id"
+                    [disabled]="isVehicleUnavailable(v.id)">
+              {{ v.brand }} {{ v.model }} {{ isVehicleUnavailable(v.id) ? '(Unavailable)' : '' }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="date-grid">
+        <div class="form-group">
+          <label>Start Date</label>
+          <input type="date" [(ngModel)]="bookingForm.start_date">
+        </div>
+        <div class="form-group">
+          <label>End Date</label>
+          <input type="date" [(ngModel)]="bookingForm.end_date">
+        </div>
+      </div>
+
+      <div class="estimate-panel" *ngIf="bookingForm.vehicle_id && bookingForm.start_date && bookingForm.end_date">
+        <div class="panel-header">
+          <span class="material-symbols-outlined">receipt_long</span>
+          <h3>Booking Estimate</h3>
+        </div>
+        <div class="estimate-row">
+          <span>Days</span>
+          <strong>{{ getDays() }}</strong>
+        </div>
+        <div class="estimate-row">
+          <span>Price/day</span>
+          <strong>{{ getSelectedVehiclePrice() | currency }}</strong>
+        </div>
+        <div class="estimate-total">
+          <span>Total</span>
+          <strong>{{ getPreviewPrice() | currency }}</strong>
+        </div>
+      </div>
+    </div>
+
+    <footer class="drawer-footer">
+      <button class="btn-secondary" (click)="closeForm()">Cancel</button>
+      <button class="btn-primary" (click)="saveBooking()">Create Booking</button>
+    </footer>
+  </aside>
 </div>

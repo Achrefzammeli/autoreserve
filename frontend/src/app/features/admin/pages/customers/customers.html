@@ -6,12 +6,30 @@
       <h1>Customers</h1>
       <p>View all registered clients and their booking history.</p>
     </div>
+   
     <div class="page-header__actions">
-      <button type="button" class="action-pill action-pill--ghost" (click)="loadData()">
-        <span class="material-symbols-outlined">refresh</span>
-        Refresh
-      </button>
-    </div>
+
+  <button
+    class="action-pill"
+    (click)="openCreateForm()">
+
+    <span class="material-symbols-outlined">
+      add
+    </span>
+
+    New Customer
+
+  </button>
+
+  <button
+    class="action-pill action-pill--ghost"
+    (click)="loadData()">
+
+    Refresh
+
+  </button>
+
+</div>
   </header>
 
   <!-- Summary cards -->
@@ -58,6 +76,8 @@
         <thead>
           <tr>
             <th>Customer</th>
+            <th>CIN</th>
+            <th>Phone</th>
             <th class="text-center">Bookings</th>
             <th class="text-right">Total spent</th>
             <th>Last booking</th>
@@ -66,35 +86,83 @@
         </thead>
         <tbody>
           <tr *ngFor="let customer of filtered">
+
             <td>
               <div class="customer-cell">
-                <div class="avatar">{{ customer.name.charAt(0).toUpperCase() }}</div>
-                <div>
-                  <strong>{{ customer.name }}</strong>
-                  <span class="sub">{{ customer.email }}</span>
+
+                <div class="avatar">
+                  {{ customer.full_name.charAt(0).toUpperCase() }}
                 </div>
+
+                <div>
+                  <strong>{{ customer.full_name }}</strong>
+
+                  <span class="sub">
+                    Customer #{{ customer.id }}
+                  </span>
+                </div>
+
               </div>
             </td>
-            <td class="text-center">
-              <span class="chip chip--neutral">{{ customer.bookings_count }}</span>
-            </td>
-            <td class="text-right">
-              <strong>{{ customer.total_spent | currency:'USD':'symbol':'1.0-0' }}</strong>
-            </td>
+
             <td>
+              {{ customer.cin }}
+            </td>
+
+            <td>
+              {{ customer.phone }}
+            </td>
+
+            <td class="text-center">
+              <span class="chip chip--neutral">
+                {{ customer.bookings_count }}
+              </span>
+            </td>
+
+            <td class="text-right">
+              <strong>
+                {{ customer.total_revenue | currency:'USD':'symbol':'1.0-0' }}
+              </strong>
+            </td>
+
+            <td>
+
               <span *ngIf="customer.last_booking; else never">
                 {{ customer.last_booking | date:'MMM d, y' }}
               </span>
-              <ng-template #never><span class="sub">—</span></ng-template>
+
+              <ng-template #never>
+                <span class="sub">—</span>
+              </ng-template>
+
             </td>
-            <td>
-              <button
-                type="button"
-                class="action-pill action-pill--xs action-pill--ghost"
-                (click)="openDrawer(customer)">
-                View history
-              </button>
-            </td>
+
+<td>
+
+  <div class="actions">
+
+    <button
+      class="action-pill action-pill--xs"
+      (click)="openDrawer(customer)">
+      History
+    </button>
+
+    <button
+      class="action-pill action-pill--xs"
+      (click)="openEditForm(customer)">
+      Edit
+    </button>
+
+    <button
+      class="action-pill action-pill--xs action-pill--danger"
+      (click)="deleteCustomer(customer.id)">
+      Delete
+    </button>
+
+  </div>
+
+</td>
+
           </tr>
         </tbody>
       </table>
@@ -117,9 +185,13 @@
 <aside class="drawer" [class.is-open]="drawerOpen">
   <div class="drawer__header">
     <div *ngIf="selectedCustomer">
-      <div class="avatar avatar--lg">{{ selectedCustomer.name.charAt(0).toUpperCase() }}</div>
-      <h2>{{ selectedCustomer.name }}</h2>
-      <span class="sub">{{ selectedCustomer.email }}</span>
+      <div class="avatar avatar--lg">{{ selectedCustomer.full_name.charAt(0).toUpperCase() }}</div>
+      <h2>{{ selectedCustomer.full_name }}</h2>
+      <span class="sub">
+  CIN : {{ selectedCustomer.cin }}
+</span><span class="sub">
+  Phone : {{ selectedCustomer.phone }}
+</span>
     </div>
     <button type="button" class="close-btn" (click)="closeDrawer()">
       <span class="material-symbols-outlined">close</span>
@@ -150,3 +222,50 @@
     </ng-template>
   </div>
 </aside>
+<div
+  class="overlay"
+  *ngIf="showForm"
+  (click)="closeForm()">
+</div>
+
+<div
+  class="modal"
+  *ngIf="showForm">
+
+  <h2>
+    {{ editingCustomer ? 'Edit Customer' : 'New Customer' }}
+  </h2>
+
+  <input
+    [(ngModel)]="customerForm.full_name"
+    placeholder="Full Name">
+
+  <input
+    [(ngModel)]="customerForm.cin"
+    placeholder="CIN">
+
+  <input
+    [(ngModel)]="customerForm.phone"
+    placeholder="Phone">
+
+  <input
+    [(ngModel)]="customerForm.email"
+    placeholder="Email">
+
+  <input
+    [(ngModel)]="customerForm.address"
+    placeholder="Address">
+
+  <div class="modal-actions">
+
+    <button (click)="closeForm()">
+      Cancel
+    </button>
+
+    <button (click)="saveCustomer()">
+      Save
+    </button>
+
+  </div>
+
+</div>

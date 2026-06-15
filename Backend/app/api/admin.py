@@ -8,7 +8,10 @@ from app.models.user import User
 from app.models.vehicle import Vehicle
 from app.models.booking import Booking
 from app.schemas.user import UserOut
-from app.schemas.booking import BookingAdminOut, BookingStatusUpdate
+from app.schemas.booking import BookingAdminOut, BookingStatusUpdate, BookingCreate
+from app.models.customer import Customer
+from app.schemas.customer import CustomerAdminOut
+
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
 
@@ -82,7 +85,6 @@ def get_user(
 
 
 # ─── BOOKINGS MANAGEMENT ────────────────────────────────────────────────────
-
 @router.get("/bookings", response_model=List[BookingAdminOut])
 def get_all_bookings(
     db: Session = Depends(get_db),
@@ -91,24 +93,39 @@ def get_all_bookings(
     bookings = db.query(Booking).order_by(Booking.created_at.desc()).all()
 
     result = []
-    for b in bookings:
-        user = db.query(User).filter(User.id == b.user_id).first()
-        vehicle = db.query(Vehicle).filter(Vehicle.id == b.vehicle_id).first()
-        result.append(BookingAdminOut(
-            id=b.id,
-            user_id=b.user_id,
-            vehicle_id=b.vehicle_id,
-            start_date=b.start_date,
-            end_date=b.end_date,
-            total_price=b.total_price,
-            status=b.status,
-            customer_name=user.name if user else None,
-            customer_email=user.email if user else None,
-            vehicle_brand=vehicle.brand if vehicle else None,
-            vehicle_model=vehicle.model if vehicle else None,
-        ))
-    return result
 
+    for b in bookings:
+
+        customer = db.query(Customer).filter(
+            Customer.id == b.customer_id
+        ).first()
+
+        vehicle = db.query(Vehicle).filter(
+            Vehicle.id == b.vehicle_id
+        ).first()
+
+        result.append(
+            BookingAdminOut(
+                id=b.id,
+                customer_id=b.customer_id,
+                vehicle_id=b.vehicle_id,
+
+                start_date=b.start_date,
+                end_date=b.end_date,
+
+                total_price=b.total_price,
+                status=b.status,
+
+                customer_name=customer.full_name if customer else None,
+                customer_cin=customer.cin if customer else None,
+                customer_phone=customer.phone if customer else None,
+
+                vehicle_brand=vehicle.brand if vehicle else None,
+                vehicle_model=vehicle.model if vehicle else None,
+            )
+        )
+
+    return result
 
 @router.put("/bookings/{booking_id}/status")
 def update_booking_status(
@@ -188,3 +205,65 @@ def get_reports(
         "top_vehicles": top_vehicles_out,
         "monthly_revenue": monthly_sorted,
     }
+@router.post("/bookings")
+def admin_create_booking(
+    body: BookingCreate,
+    db: Session = Depends(get_db),
+    admin=Depends(require_role("ADMIN"))
+):
+    customer = db.query(Customer).filter(Customer.id == body.customer_id).first()
+    if not customer:
+        raise HTTPException(status_code=404, detail="Customer not found")
+
+    vehicle = db.query(Vehicle).filter(Vehicle.id == body.vehicle_id).first()
+    if not vehicle:
+        raise HTTPException(status_code=404, detail="Vehicle not found")
+
+    if vehicle.status != "AVAILABLE":
+        raise HTTPException(status_code=400, detail="Vehicle not available")
+
+    # overlap check
+    conflict = db.query(Booking).filter(
+        Booking.vehicle_id == body.vehicle_id,
+        Booking.status != "CANCELLED",
+        Booking.start_date <= body.end_date,
+        Booking.end_date >= body.start_date
+    ).first()
+
+    if conflict:
+        raise HTTPException(status_code=400, detail="Vehicle already booked")
+
+    days = (body.end_date - body.start_date).days + 1
+    total_price = days * vehicle.price_per_day
+
+    booking = Booking(
+        customer_id=body.customer_id,
+        vehicle_id=body.vehicle_id,
+        start_date=body.start_date,
+        end_date=body.end_date,
+        total_price=total_price,
+        status="CONFIRMED"
+    )
+
+    db.add(booking)
+    db.commit()
+    db.refresh(booking)
+
+    return booking
+@router.get("/vehicle/{vehicle_id}/calendar")
+def get_vehicle_calendar(vehicle_id: int, db: Session = Depends(get_db)):
+
+    bookings = db.query(Booking).filter(
+        Booking.vehicle_id == vehicle_id,
+        Booking.status == "CONFIRMED"
+    ).all()
+
+    result = []
+
+    for b in bookings:
+        result.append({
+            "start": b.start_date,
+            "end": b.end_date
+        })
+
+    return result

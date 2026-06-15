@@ -1,12 +1,22 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AdminService, AdminUser, AdminBooking } from '../../../../core/services/admin.service';
-import { map } from 'rxjs';
 
-interface CustomerRow extends AdminUser {
+import {
+  AdminService,
+  AdminBooking
+} from '../../../../core/services/admin.service';
+
+interface CustomerRow {
+  id: number;
+  full_name: string;
+  cin: string;
+  phone: string;
+  email?: string;
+  address?: string;
+
   bookings_count: number;
-  total_spent: number;
+  total_revenue: number;
   last_booking: string | null;
 }
 
@@ -23,18 +33,27 @@ export class Customers implements OnInit {
 
   customers: CustomerRow[] = [];
   filtered: CustomerRow[] = [];
+
   loading = false;
   errorMessage = '';
   searchQuery = '';
 
-  // drawer
   selectedCustomer: CustomerRow | null = null;
-  customerBookings: AdminBooking[] = [];
+
   drawerOpen = false;
-  drawerLoading = false;
 
+  customerBookings: AdminBooking[] = [];
   private allBookings: AdminBooking[] = [];
+  showForm = false;
+  editingCustomer: CustomerRow | null = null;
 
+  customerForm = {
+    full_name: '',
+    cin: '',
+    phone: '',
+    email: '',
+    address: ''
+  };
   ngOnInit(): void {
     this.loadData();
   }
@@ -43,63 +62,53 @@ export class Customers implements OnInit {
     this.loading = true;
     this.errorMessage = '';
 
-    // load users and all bookings in parallel
-    this.adminService.getUsers().subscribe({
-      next: (users) => {
-        this.adminService.getBookings().subscribe({
-          next: (bookings) => {
-            this.allBookings = bookings;
-            this.customers = users.map(u => this.buildRow(u, bookings));
-            this.filtered = [...this.customers];
-            this.loading = false;
-          },
-          error: () => {
-            // users loaded, bookings failed — still show users
-            this.customers = users.map(u => this.buildRow(u, []));
-            this.filtered = [...this.customers];
-            this.loading = false;
-          }
-        });
+    this.adminService.getCustomers().subscribe({
+      next: (customers) => {
+
+        this.customers = customers;
+        this.filtered = [...customers];
+
+        this.loading = false;
       },
+
       error: () => {
         this.errorMessage = 'Failed to load customers.';
         this.loading = false;
       }
     });
-  }
 
-  private buildRow(user: AdminUser, bookings: AdminBooking[]): CustomerRow {
-    const userBookings = bookings.filter(b => b.user_id === user.id);
-    const spent = userBookings
-      .filter(b => b.status !== 'CANCELLED')
-      .reduce((sum, b) => sum + b.total_price, 0);
-
-    const sorted = [...userBookings].sort(
-      (a, b) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime()
-    );
-
-    return {
-      ...user,
-      bookings_count: userBookings.length,
-      total_spent: spent,
-      last_booking: sorted[0]?.start_date ?? null,
-    };
+    this.adminService.getBookings().subscribe({
+      next: bookings => {
+        this.allBookings = bookings;
+      }
+    });
   }
 
   onSearch(): void {
+
     const q = this.searchQuery.trim().toLowerCase();
-    this.filtered = q
-      ? this.customers.filter(c =>
-          c.name.toLowerCase().includes(q) ||
-          c.email.toLowerCase().includes(q)
-        )
-      : [...this.customers];
+
+    if (!q) {
+      this.filtered = [...this.customers];
+      return;
+    }
+
+    this.filtered = this.customers.filter(customer =>
+      customer.full_name.toLowerCase().includes(q) ||
+      customer.cin.toLowerCase().includes(q) ||
+      customer.phone.toLowerCase().includes(q)
+    );
   }
 
   openDrawer(customer: CustomerRow): void {
+
     this.selectedCustomer = customer;
+
+    this.customerBookings = this.allBookings.filter(
+      booking => booking.customer_id === customer.id
+    );
+
     this.drawerOpen = true;
-    this.customerBookings = this.allBookings.filter(b => b.user_id === customer.id);
   }
 
   closeDrawer(): void {
@@ -109,15 +118,94 @@ export class Customers implements OnInit {
   }
 
   statusClass(status: string): string {
-    const map: Record<string, string> = {
+
+    const classes: Record<string, string> = {
       CONFIRMED: 'chip--success',
       PENDING: 'chip--pending',
-      CANCELLED: 'chip--cancelled',
+      CANCELLED: 'chip--cancelled'
     };
-    return map[status] ?? '';
+
+    return classes[status] ?? '';
   }
 
   get totalRevenue(): number {
-    return this.customers.reduce((sum, c) => sum + c.total_spent, 0);
+
+    return this.customers.reduce(
+      (sum, customer) => sum + customer.total_revenue,
+      0
+    );
   }
+  deleteCustomer(id: number): void {
+
+  if (!confirm('Delete customer ?')) {
+    return;
+  }
+
+  this.adminService.deleteCustomer(id).subscribe({
+    next: () => {
+      this.loadData();
+    }
+  });
+
+}
+openCreateForm(): void {
+
+  this.editingCustomer = null;
+
+  this.customerForm = {
+    full_name: '',
+    cin: '',
+    phone: '',
+    email: '',
+    address: ''
+  };
+
+  this.showForm = true;
+}
+
+openEditForm(customer: CustomerRow): void {
+
+  this.editingCustomer = customer;
+
+  this.customerForm = {
+    full_name: customer.full_name,
+    cin: customer.cin,
+    phone: customer.phone,
+    email: customer.email || '',
+    address: customer.address || ''
+  };
+
+  this.showForm = true;
+}
+
+closeForm(): void {
+  this.showForm = false;
+}
+
+saveCustomer(): void {
+
+  if (this.editingCustomer) {
+
+    this.adminService.updateCustomer(
+      this.editingCustomer.id,
+      this.customerForm
+    ).subscribe({
+      next: () => {
+        this.showForm = false;
+        this.loadData();
+      }
+    });
+
+  } else {
+
+    this.adminService.createCustomer(
+      this.customerForm
+    ).subscribe({
+      next: () => {
+        this.showForm = false;
+        this.loadData();
+      }
+    });
+  }
+}
 }

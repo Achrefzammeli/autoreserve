@@ -9,8 +9,16 @@ class Booking(Base):
 
     id = Column(Integer, primary_key=True, index=True)
 
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    vehicle_id = Column(Integer, ForeignKey("vehicles.id"), nullable=False)
+    customer_id = Column(
+        Integer,
+        ForeignKey("customers.id"),
+        nullable=False
+    )
+    vehicle_id = Column(
+        Integer,
+        ForeignKey("vehicles.id"),
+        nullable=False
+    )
 
     start_date = Column(DateTime, nullable=False)
     end_date = Column(DateTime, nullable=False)
