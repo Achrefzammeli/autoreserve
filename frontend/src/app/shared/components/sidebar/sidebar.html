@@ -1,151 +1,104 @@
-<!-- ═══ DESKTOP SIDEBAR ═══════════════════════════════════════════ -->
-<aside class="sidebar desktop-sidebar custom-scrollbar">
-  <div class="sidebar__brand">
-    <div class="sidebar__logo">
-      <span class="material-symbols-outlined">directions_car</span>
-    </div>
-    <div>
-      <h1>AutoReserve</h1>
-      <p>Admin Console</p>
-    </div>
-  </div>
+<!-- ====================================================================
+     Sidebar admin — fixe sur desktop, top bar + bottom nav sur mobile
+     ==================================================================== -->
 
-  <nav class="sidebar__nav">
-    <a routerLink="/admin/dashboard" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }">
-      <span class="material-symbols-outlined">dashboard</span>
-      <span>Dashboard</span>
+<!-- Top bar mobile -->
+<header class="lg:hidden fixed top-0 inset-x-0 z-40 h-[var(--header-h)] bg-ink-950/95 backdrop-blur-xl border-b border-white/[.06] flex items-center">
+  <div class="w-full px-4 flex items-center justify-between">
+    <a routerLink="/admin/dashboard" class="flex items-center gap-2.5 select-none">
+      <img src="logocar.png" alt="" class="h-8 w-auto object-contain mix-blend-screen" />
+      <span class="text-white font-extrabold tracking-tight">
+        Auto<span class="text-brand-400">Reserve</span>
+        <span class="ml-2 text-[10px] font-extrabold uppercase tracking-[.16em] text-ink-400 bg-white/[.07] rounded-full px-2 py-1">Admin</span>
+      </span>
     </a>
-    <a routerLink="/admin/vehicles" routerLinkActive="is-active">
-      <span class="material-symbols-outlined">directions_car</span>
-      <span>Fleet</span>
-    </a>
-    <a routerLink="/admin/bookings" routerLinkActive="is-active">
-      <span class="material-symbols-outlined">calendar_month</span>
-      <span>Bookings</span>
-    </a>
-    <a routerLink="/admin/customers" routerLinkActive="is-active">
-      <span class="material-symbols-outlined">group</span>
-      <span>Customers</span>
-    </a>
-    <a routerLink="/admin/reports" routerLinkActive="is-active">
-      <span class="material-symbols-outlined">bar_chart</span>
-      <span>Reports</span>
-    </a>
-  </nav>
-
-  <div class="sidebar__footer">
-    <button type="button" class="footer-btn" (click)="logout()">
-      <span class="material-symbols-outlined">logout</span>
-      <span>Logout</span>
+    <button (click)="logout()" aria-label="Déconnexion"
+            class="w-10 h-10 flex items-center justify-center rounded-full text-ink-300 hover:text-white hover:bg-white/10 transition-colors">
+      <span class="material-symbols-outlined text-[22px]">logout</span>
     </button>
-    <div class="sidebar__profile">
-      <div class="sidebar__avatar">
-        <span class="material-symbols-outlined avatar-icon">account_circle</span>
-      </div>
-      <div>
-        <p>Fleet Manager</p>
-        <span>Admin Console</span>
-      </div>
-    </div>
   </div>
-</aside>
-
-
-<!-- ═══ MOBILE TOP BAR ════════════════════════════════════════════ -->
-<header class="mobile-topbar">
-  <div class="mobile-topbar__brand">
-    <div class="sidebar__logo sidebar__logo--sm">
-      <span class="material-symbols-outlined">directions_car</span>
-    </div>
-    <span class="mobile-topbar__title">AutoReserve</span>
-  </div>
-  <button type="button" class="icon-btn" (click)="toggleDrawer()">
-    <span class="material-symbols-outlined">menu</span>
-  </button>
 </header>
 
+<!-- Sidebar desktop -->
+<aside class="hidden lg:flex fixed inset-y-0 left-0 z-40 w-64 flex-col bg-ink-950 border-r border-white/[.06]">
 
-<!-- ═══ MOBILE DRAWER ════════════════════════════════════════════ -->
-<div class="drawer-overlay" [class.is-open]="drawerOpen()" (click)="closeDrawer()"></div>
+  <!-- Marque -->
+  <a routerLink="/admin/dashboard" class="flex items-center gap-2.5 px-6 h-[var(--header-h)] border-b border-white/[.06] select-none">
+    <img src="logocar.png" alt="" class="h-8 w-auto object-contain mix-blend-screen" />
+    <span class="text-white font-extrabold tracking-tight">Auto<span class="text-brand-400">Reserve</span></span>
+  </a>
 
-<aside class="mobile-drawer" [class.is-open]="drawerOpen()">
-  <div class="mobile-drawer__header">
-    <div class="sidebar__brand">
-      <div class="sidebar__logo">
-        <span class="material-symbols-outlined">directions_car</span>
-      </div>
-      <div>
-        <h1>AutoReserve</h1>
-        <p>Admin Console</p>
-      </div>
-    </div>
-    <button type="button" class="icon-btn" (click)="closeDrawer()">
-      <span class="material-symbols-outlined">close</span>
-    </button>
-  </div>
+  <!-- Navigation -->
+  <nav class="flex-1 overflow-y-auto scrollbar-thin px-3 py-6 space-y-1">
+    <p class="px-3 pb-2 text-[10px] font-extrabold uppercase tracking-[.18em] text-ink-500">Pilotage</p>
 
-  <nav class="sidebar__nav drawer-nav">
-    <a routerLink="/admin/dashboard" routerLinkActive="is-active"
-       [routerLinkActiveOptions]="{ exact: true }" (click)="closeDrawer()">
-      <span class="material-symbols-outlined">dashboard</span>
-      <span>Dashboard</span>
+    <a routerLink="/admin/dashboard" routerLinkActive="bg-brand-600 text-white shadow-glow"
+       class="flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-bold text-ink-400 hover:text-white hover:bg-white/[.06] transition-colors">
+      <span class="material-symbols-outlined text-[21px]">space_dashboard</span>
+      Tableau de bord
     </a>
-    <a routerLink="/admin/vehicles" routerLinkActive="is-active" (click)="closeDrawer()">
-      <span class="material-symbols-outlined">directions_car</span>
-      <span>Fleet</span>
+
+    <a routerLink="/admin/reports" routerLinkActive="bg-brand-600 text-white shadow-glow"
+       class="flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-bold text-ink-400 hover:text-white hover:bg-white/[.06] transition-colors">
+      <span class="material-symbols-outlined text-[21px]">monitoring</span>
+      Rapports
     </a>
-    <a routerLink="/admin/bookings" routerLinkActive="is-active" (click)="closeDrawer()">
-      <span class="material-symbols-outlined">calendar_month</span>
-      <span>Bookings</span>
+
+    <p class="px-3 pt-6 pb-2 text-[10px] font-extrabold uppercase tracking-[.18em] text-ink-500">Gestion</p>
+
+    <a routerLink="/admin/vehicles" routerLinkActive="bg-brand-600 text-white shadow-glow"
+       class="flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-bold text-ink-400 hover:text-white hover:bg-white/[.06] transition-colors">
+      <span class="material-symbols-outlined text-[21px]">directions_car</span>
+      Véhicules
     </a>
-    <a routerLink="/admin/customers" routerLinkActive="is-active" (click)="closeDrawer()">
-      <span class="material-symbols-outlined">group</span>
-      <span>Customers</span>
+
+    <a routerLink="/admin/bookings" routerLinkActive="bg-brand-600 text-white shadow-glow"
+       class="flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-bold text-ink-400 hover:text-white hover:bg-white/[.06] transition-colors">
+      <span class="material-symbols-outlined text-[21px]">event_available</span>
+      Réservations
     </a>
-    <a routerLink="/admin/reports" routerLinkActive="is-active" (click)="closeDrawer()">
-      <span class="material-symbols-outlined">bar_chart</span>
-      <span>Reports</span>
+
+    <a routerLink="/admin/customers" routerLinkActive="bg-brand-600 text-white shadow-glow"
+       class="flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-bold text-ink-400 hover:text-white hover:bg-white/[.06] transition-colors">
+      <span class="material-symbols-outlined text-[21px]">group</span>
+      Clients
     </a>
   </nav>
 
-  <div class="sidebar__footer drawer-footer">
-    <button type="button" class="footer-btn" (click)="logout(); closeDrawer()">
-      <span class="material-symbols-outlined">logout</span>
-      <span>Logout</span>
+  <!-- Pied -->
+  <div class="p-4 border-t border-white/[.06]">
+    <a routerLink="/" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-bold text-ink-400 hover:text-white hover:bg-white/[.06] transition-colors">
+      <span class="material-symbols-outlined text-[20px]">storefront</span>
+      Voir le site
+    </a>
+    <button (click)="logout()"
+            class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-bold text-red-400 hover:bg-red-500/10 transition-colors">
+      <span class="material-symbols-outlined text-[20px]">logout</span>
+      Déconnexion
     </button>
-    <div class="sidebar__profile">
-      <div class="sidebar__avatar">
-        <span class="material-symbols-outlined avatar-icon">account_circle</span>
-      </div>
-      <div>
-        <p>Fleet Manager</p>
-        <span>Admin Console</span>
-      </div>
-    </div>
   </div>
 </aside>
 
-
-<!-- ═══ MOBILE BOTTOM NAV ════════════════════════════════════════ -->
-<nav class="bottom-nav">
-  <a routerLink="/admin/dashboard" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }">
-    <span class="material-symbols-outlined">dashboard</span>
-    <span>Dashboard</span>
+<!-- Bottom nav mobile -->
+<nav class="bottomnav grid-cols-5" aria-label="Navigation admin">
+  <a routerLink="/admin/dashboard" routerLinkActive="is-active" class="bottomnav-item">
+    <span class="material-symbols-outlined">space_dashboard</span>
+    Tableau
   </a>
-  <a routerLink="/admin/vehicles" routerLinkActive="is-active">
+  <a routerLink="/admin/vehicles" routerLinkActive="is-active" class="bottomnav-item">
     <span class="material-symbols-outlined">directions_car</span>
-    <span>Fleet</span>
+    Véhicules
   </a>
-  <a routerLink="/admin/bookings" routerLinkActive="is-active">
-    <span class="material-symbols-outlined">calendar_month</span>
-    <span>Bookings</span>
+  <a routerLink="/admin/bookings" routerLinkActive="is-active" class="bottomnav-item">
+    <span class="material-symbols-outlined">event_available</span>
+    Résas
   </a>
-  <a routerLink="/admin/customers" routerLinkActive="is-active">
+  <a routerLink="/admin/customers" routerLinkActive="is-active" class="bottomnav-item">
     <span class="material-symbols-outlined">group</span>
-    <span>Customers</span>
+    Clients
   </a>
-  <a routerLink="/admin/reports" routerLinkActive="is-active">
-    <span class="material-symbols-outlined">bar_chart</span>
-    <span>Reports</span>
+  <a routerLink="/admin/reports" routerLinkActive="is-active" class="bottomnav-item">
+    <span class="material-symbols-outlined">monitoring</span>
+    Rapports
   </a>
 </nav>

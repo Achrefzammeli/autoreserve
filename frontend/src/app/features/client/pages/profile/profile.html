@@ -1,1 +1,69 @@
-<p>profile works!</p>
+<div class="container-app py-8 sm:py-12 max-w-2xl">
+
+  <!-- En-tête profil -->
+  <header class="card card-pad sm:!p-8 flex items-center gap-5 mb-6">
+    <span class="w-16 h-16 rounded-full bg-ink-950 text-white flex items-center justify-center shrink-0">
+      <span class="material-symbols-outlined text-[30px]">person</span>
+    </span>
+    <div>
+      <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">Mon compte</h1>
+      <p class="mt-1 flex items-center gap-2 text-sm text-ink-500">
+        <span class="chip-info">{{ role }}</span>
+        <span *ngIf="userId" class="font-semibold">Compte n°{{ userId }}</span>
+      </p>
+    </div>
+  </header>
+
+  <!-- Raccourcis -->
+  <div class="card divide-y divide-ink-100 mb-6 overflow-hidden">
+    <a routerLink="/client/bookings" class="group flex items-center gap-4 p-5 hover:bg-ink-50 transition-colors">
+      <span class="w-11 h-11 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center shrink-0">
+        <span class="material-symbols-outlined">event_available</span>
+      </span>
+      <div class="flex-1">
+        <h2 class="font-extrabold">Mes réservations</h2>
+        <p class="text-[13px] text-ink-500">Historique et locations en cours</p>
+      </div>
+      <span class="material-symbols-outlined text-ink-300 group-hover:translate-x-1 transition-transform">chevron_right</span>
+    </a>
+
+    <a routerLink="/fleet" class="group flex items-center gap-4 p-5 hover:bg-ink-50 transition-colors">
+      <span class="w-11 h-11 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center shrink-0">
+        <span class="material-symbols-outlined">directions_car</span>
+      </span>
+      <div class="flex-1">
+        <h2 class="font-extrabold">Réserver un véhicule</h2>
+        <p class="text-[13px] text-ink-500">Parcourir la flotte disponible</p>
+      </div>
+      <span class="material-symbols-outlined text-ink-300 group-hover:translate-x-1 transition-transform">chevron_right</span>
+    </a>
+
+    <a routerLink="/auth/forgot-password" class="group flex items-center gap-4 p-5 hover:bg-ink-50 transition-colors">
+      <span class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+        <span class="material-symbols-outlined">lock_reset</span>
+      </span>
+      <div class="flex-1">
+        <h2 class="font-extrabold">Sécurité</h2>
+        <p class="text-[13px] text-ink-500">Changer mon mot de passe (2FA)</p>
+      </div>
+      <span class="material-symbols-outlined text-ink-300 group-hover:translate-x-1 transition-transform">chevron_right</span>
+    </a>
+
+    <a routerLink="/contact" class="group flex items-center gap-4 p-5 hover:bg-ink-50 transition-colors">
+      <span class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+        <span class="material-symbols-outlined">support_agent</span>
+      </span>
+      <div class="flex-1">
+        <h2 class="font-extrabold">Assistance</h2>
+        <p class="text-[13px] text-ink-500">Contacter notre équipe 24/7</p>
+      </div>
+      <span class="material-symbols-outlined text-ink-300 group-hover:translate-x-1 transition-transform">chevron_right</span>
+    </a>
+  </div>
+
+  <!-- Déconnexion -->
+  <button (click)="logout()" class="btn-danger w-full">
+    <span class="material-symbols-outlined text-[20px]">logout</span>
+    Se déconnecter
+  </button>
+</div>

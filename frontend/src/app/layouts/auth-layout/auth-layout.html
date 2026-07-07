@@ -1,3 +1,69 @@
-<div class="auth-container">
-  <router-outlet></router-outlet>
+<div class="min-h-screen grid lg:grid-cols-[1.05fr_1fr] bg-white">
+
+  <!-- Panneau de marque (desktop) -->
+  <aside class="hidden lg:flex relative flex-col justify-between overflow-hidden bg-ink-950 text-white p-12">
+    <!-- Décor -->
+    <div class="absolute inset-0 opacity-[.35]"
+         style="background:
+           radial-gradient(60rem 30rem at -10% 110%, rgba(36,80,227,.55), transparent 60%),
+           radial-gradient(40rem 24rem at 110% -10%, rgba(61,110,240,.35), transparent 60%);">
+    </div>
+    <div class="absolute inset-0 opacity-[.05]"
+         style="background-image: linear-gradient(rgba(255,255,255,.8) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.8) 1px, transparent 1px); background-size: 44px 44px;">
+    </div>
+
+    <a routerLink="/" class="relative z-10 flex items-center gap-2.5 select-none w-fit">
+      <img src="logocar.png" alt="" class="h-10 w-auto object-contain mix-blend-screen" />
+      <span class="text-white font-extrabold text-xl tracking-tight">Auto<span class="text-brand-400">Reserve</span></span>
+    </a>
+
+    <div class="relative z-10 max-w-md">
+      <p class="eyebrow !text-brand-300">Location premium</p>
+      <h2 class="mt-4 text-4xl xl:text-5xl font-extrabold leading-[1.08] text-white text-balance">
+        La route vous appartient.
+      </h2>
+      <p class="mt-5 text-ink-300 leading-relaxed">
+        Réservez le véhicule idéal en quelques clics. Des berlines élégantes aux SUV
+        spacieux, notre flotte vous attend.
+      </p>
+
+      <ul class="mt-8 space-y-3.5 text-sm font-semibold text-ink-200">
+        <li class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-brand-400 text-[20px]">verified</span>
+          Véhicules récents, entretenus et assurés
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-brand-400 text-[20px]">lock</span>
+          Paiement et données 100 % sécurisés
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-brand-400 text-[20px]">support_agent</span>
+          Assistance 24h/24, 7j/7
+        </li>
+      </ul>
+    </div>
+
+    <p class="relative z-10 text-[13px] text-ink-500">© 2026 AutoReserve — Tous droits réservés.</p>
+  </aside>
+
+  <!-- Contenu (formulaires) -->
+  <section class="relative flex flex-col min-h-screen">
+    <!-- Logo mobile -->
+    <div class="lg:hidden flex items-center justify-between px-5 pt-6">
+      <a routerLink="/" class="flex items-center gap-2 select-none">
+        <img src="logocar.png" alt="" class="h-8 w-auto object-contain bg-ink-950 rounded-lg p-1" />
+        <span class="font-extrabold text-lg tracking-tight text-ink-950">Auto<span class="text-brand-600">Reserve</span></span>
+      </a>
+      <a routerLink="/" class="btn-ghost btn-sm">
+        <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+        Retour au site
+      </a>
+    </div>
+
+    <div class="flex-1 flex items-center justify-center px-5 sm:px-10 py-10">
+      <div class="w-full max-w-md animate-fade-up">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </section>
 </div>

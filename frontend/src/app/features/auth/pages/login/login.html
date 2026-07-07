@@ -1,130 +1,57 @@
-<div class="login-page">
+<div>
+  <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Bon retour parmi nous 👋</h1>
+  <p class="mt-2 text-ink-500">Connectez-vous pour gérer vos réservations.</p>
 
-  <!-- LEFT — desktop dark hero panel -->
-  <aside class="login-hero">
-    <div class="hero-noise"></div>
-    <div class="hero-glow hero-glow--1"></div>
-    <div class="hero-glow hero-glow--2"></div>
+  <form [formGroup]="form" (ngSubmit)="submit()" class="mt-8 space-y-5">
 
-    <div class="hero-inner">
-      <div class="hero-brand">
-        <div class="brand-mark">
-          <span class="material-symbols-outlined">directions_car</span>
-        </div>
-        <span class="brand-name">AutoReserve</span>
-      </div>
-
-      <div class="hero-copy">
-        <p class="hero-eyebrow">Fleet Management Console</p>
-        <h1 class="hero-headline">Drive your<br><em>fleet forward.</em></h1>
-        <p class="hero-sub">
-          Manage reservations, track your fleet,<br>
-          and grow your business — all in one place.
-        </p>
-      </div>
-
-      <div class="hero-stats">
-        <div class="hero-stat">
-          <strong>99.9%</strong>
-          <span>Uptime</span>
-        </div>
-        <div class="hero-stat-divider"></div>
-        <div class="hero-stat">
-          <strong>Real-time</strong>
-          <span>Fleet tracking</span>
-        </div>
-        <div class="hero-stat-divider"></div>
-        <div class="hero-stat">
-          <strong>Secure</strong>
-          <span>Role-based access</span>
-        </div>
-      </div>
+    <div *ngIf="errorMessage()" class="alert-error animate-fade-in">
+      <span class="material-symbols-outlined text-[20px]">error</span>
+      {{ errorMessage() }}
     </div>
-  </aside>
 
-  <!-- MOBILE — dark hero top (hidden on desktop) -->
-  <div class="mobile-hero">
-    <div class="mobile-brand">
-      <div class="brand-mark">
-        <span class="material-symbols-outlined">directions_car</span>
+    <label class="block">
+      <span class="label">Adresse e-mail</span>
+      <div class="input-icon-wrap">
+        <span class="material-symbols-outlined">mail</span>
+        <input type="email" formControlName="email" class="input" placeholder="vous@exemple.com" autocomplete="email" />
       </div>
-      <span class="brand-name">AutoReserve</span>
-    </div>
-    <h1 class="mobile-headline">Drive your<br><em>fleet forward.</em></h1>
-    <p class="mobile-tagline">Fleet management console — sign in to continue.</p>
-  </div>
+      <p *ngIf="isInvalid('email')" class="field-error">
+        <span class="material-symbols-outlined text-[16px]">error</span>
+        Adresse e-mail valide requise
+      </p>
+    </label>
 
-  <!-- RIGHT — form panel (becomes white bottom sheet on mobile) -->
-  <main class="login-form-panel">
-    <div class="form-panel-inner">
-
-      <div class="form-card">
-        <div class="form-card__top">
-          <h2>Welcome back</h2>
-          <p>Sign in to your admin console</p>
-        </div>
-
-        <div class="error-alert" *ngIf="errorMessage()">
-          <span class="material-symbols-outlined">error</span>
-          {{ errorMessage() }}
-        </div>
-
-        <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-
-          <div class="field" [class.field--error]="isInvalid('email')">
-            <label for="email">Email address</label>
-            <div class="input-wrap">
-              <span class="material-symbols-outlined input-icon">mail</span>
-              <input
-                id="email"
-                type="email"
-                formControlName="email"
-                placeholder="you@company.com"
-                autocomplete="email" />
-            </div>
-            <span class="field-error" *ngIf="isInvalid('email')">Enter a valid email address</span>
-          </div>
-
-          <div class="field" [class.field--error]="isInvalid('password')">
-            <div class="field-label-row">
-              <label for="password">Password</label>
-              <a routerLink="/auth/forgot-password" class="forgot-link">Forgot password?</a>
-            </div>
-            <div class="input-wrap">
-              <span class="material-symbols-outlined input-icon">lock</span>
-              <input
-                id="password"
-                [type]="showPassword() ? 'text' : 'password'"
-                formControlName="password"
-                placeholder="••••••••"
-                autocomplete="current-password" />
-              <button type="button" class="eye-btn" (click)="togglePassword()">
-                <span class="material-symbols-outlined">
-                  {{ showPassword() ? 'visibility_off' : 'visibility' }}
-                </span>
-              </button>
-            </div>
-            <span class="field-error" *ngIf="isInvalid('password')">Password is required</span>
-          </div>
-
-          <button type="submit" class="submit-btn" [class.is-loading]="loading()">
-            <span class="submit-btn__text">
-              <ng-container *ngIf="!loading()">Sign in</ng-container>
-              <ng-container *ngIf="loading()">Signing in…</ng-container>
-            </span>
-            <span class="material-symbols-outlined" *ngIf="!loading()">arrow_forward</span>
-            <span class="spinner" *ngIf="loading()"></span>
-          </button>
-
-        </form>
-
-        <p class="form-footer">
-          Don't have an account?
-          <a routerLink="/auth/register">Create one free</a>
-        </p>
+    <label class="block">
+      <div class="flex items-center justify-between">
+        <span class="label !mb-0">Mot de passe</span>
+        <a routerLink="/auth/forgot-password" class="text-[13px] font-bold text-brand-600 hover:text-brand-700">
+          Mot de passe oublié ?
+        </a>
       </div>
+      <div class="input-icon-wrap mt-2">
+        <span class="material-symbols-outlined">lock</span>
+        <input [type]="showPassword() ? 'text' : 'password'" formControlName="password"
+               class="input !pr-12" placeholder="••••••••" autocomplete="current-password" />
+        <button type="button" (click)="togglePassword()"
+                class="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center rounded-lg text-ink-400 hover:text-ink-700 hover:bg-ink-50 transition-colors"
+                [attr.aria-label]="showPassword() ? 'Masquer le mot de passe' : 'Afficher le mot de passe'">
+          <span class="material-symbols-outlined text-[20px]">{{ showPassword() ? 'visibility_off' : 'visibility' }}</span>
+        </button>
+      </div>
+      <p *ngIf="isInvalid('password')" class="field-error">
+        <span class="material-symbols-outlined text-[16px]">error</span>
+        Mot de passe requis
+      </p>
+    </label>
 
-    </div>
-  </main>
+    <button type="submit" class="btn-primary btn-lg w-full" [disabled]="loading()">
+      <span *ngIf="loading()" class="w-5 h-5 rounded-full border-2 border-white/40 border-t-white animate-spin"></span>
+      {{ loading() ? 'Connexion…' : 'Se connecter' }}
+    </button>
+  </form>
 
+  <p class="mt-8 text-center text-sm text-ink-500">
+    Pas encore de compte ?
+    <a routerLink="/auth/register" class="font-extrabold text-brand-600 hover:text-brand-700">Créer un compte</a>
+  </p>
 </div>

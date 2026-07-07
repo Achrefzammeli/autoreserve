@@ -1,0 +1,19 @@
+{
+  "name": "AutoReserve — Location de voitures",
+  "short_name": "AutoReserve",
+  "description": "Réservez votre voiture en quelques clics. Flotte premium, prix transparents, service 24/7.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b1220",
+  "theme_color": "#0b1220",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "logocar.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

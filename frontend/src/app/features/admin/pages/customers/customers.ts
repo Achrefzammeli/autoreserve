@@ -120,9 +120,9 @@ export class Customers implements OnInit {
   statusClass(status: string): string {
 
     const classes: Record<string, string> = {
-      CONFIRMED: 'chip--success',
-      PENDING: 'chip--pending',
-      CANCELLED: 'chip--cancelled'
+      CONFIRMED: 'chip-success',
+      PENDING: 'chip-warning',
+      CANCELLED: 'chip-danger'
     };
 
     return classes[status] ?? '';

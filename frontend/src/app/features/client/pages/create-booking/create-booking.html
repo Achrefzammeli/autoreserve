@@ -1,1 +1,41 @@
-<p>create-booking works!</p>
+<div class="container-app py-8 sm:py-12 max-w-2xl">
+
+  <header class="mb-8">
+    <span class="eyebrow">Nouvelle réservation</span>
+    <h1 class="mt-2 text-2xl sm:text-4xl font-extrabold tracking-tight">Quand partez-vous ?</h1>
+    <p class="mt-2 text-ink-500">Choisissez vos dates, nous vous montrons les véhicules disponibles.</p>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="search()" class="card card-pad sm:!p-8 space-y-5">
+    <label class="block">
+      <span class="label">Date de départ</span>
+      <div class="input-icon-wrap">
+        <span class="material-symbols-outlined">calendar_today</span>
+        <input type="date" formControlName="start_date" class="input" />
+      </div>
+      <p *ngIf="submitted && !form.value.start_date" class="field-error">
+        <span class="material-symbols-outlined text-[16px]">error</span> Date de départ requise
+      </p>
+    </label>
+
+    <label class="block">
+      <span class="label">Date de retour</span>
+      <div class="input-icon-wrap">
+        <span class="material-symbols-outlined">event</span>
+        <input type="date" formControlName="end_date" class="input" />
+      </div>
+      <p *ngIf="submitted && !form.value.end_date" class="field-error">
+        <span class="material-symbols-outlined text-[16px]">error</span> Date de retour requise
+      </p>
+    </label>
+
+    <button type="submit" class="btn-primary btn-lg w-full">
+      Voir les véhicules disponibles
+      <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+    </button>
+
+    <p class="text-center text-sm text-ink-500">
+      Ou <a routerLink="/fleet" class="font-extrabold text-brand-600 hover:text-brand-700">parcourez toute la flotte</a> sans filtrer par dates.
+    </p>
+  </form>
+</div>

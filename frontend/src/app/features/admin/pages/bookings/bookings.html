@@ -1,212 +1,166 @@
-<div class="bookings-page">
-  <!-- HEADER -->
-  <header class="page-header">
-    <div class="header-info">
-      <span class="eyebrow">ADMIN / BOOKINGS</span>
-      <h1>Bookings management</h1>
-      <p>Create and manage reservations manually</p>
-    </div>
+<div class="container-app py-8 lg:py-10">
 
-    <button class="action-pill primary-btn" (click)="openCreateForm()">
-      <span class="material-symbols-outlined">add</span>
-      New Booking
+  <!-- En-tête -->
+  <header class="flex flex-wrap items-end justify-between gap-4 mb-8">
+    <div>
+      <span class="eyebrow">Administration</span>
+      <h1 class="mt-2 text-2xl sm:text-3xl font-extrabold tracking-tight">Réservations</h1>
+      <p class="mt-1.5 text-ink-500">Suivez et validez les demandes de location.</p>
+    </div>
+    <button (click)="openCreateForm()" class="btn-primary">
+      <span class="material-symbols-outlined text-[20px]">add</span>
+      Nouvelle réservation
     </button>
   </header>
 
-  <!-- SUMMARY STATS -->
-  <section class="summary-grid">
-    <article class="summary-card">
-      <div class="card-icon-wrapper">
-        <span class="material-symbols-outlined">calendar_month</span>
-      </div>
-      <div class="card-content">
-        <small>Total</small>
-        <strong>{{ bookings.length }}</strong>
-      </div>
-    </article>
+  <div *ngIf="errorMessage" class="alert-error mb-6">
+    <span class="material-symbols-outlined text-[20px]">error</span>
+    {{ errorMessage }}
+  </div>
 
-    <article class="summary-card">
-      <div class="card-icon-wrapper pending-icon">
-        <span class="material-symbols-outlined">schedule</span>
-      </div>
-      <div class="card-content">
-        <small>Pending</small>
-        <strong>{{ pendingCount }}</strong>
-      </div>
-    </article>
-
-    <article class="summary-card">
-      <div class="card-icon-wrapper confirmed-icon">
-        <span class="material-symbols-outlined">check_circle</span>
-      </div>
-      <div class="card-content">
-        <small>Confirmed</small>
-        <strong>{{ confirmedCount }}</strong>
-      </div>
-    </article>
-
-    <article class="summary-card revenue-card">
-      <div class="card-icon-wrapper revenue-icon">
-        <span class="material-symbols-outlined">payments</span>
-      </div>
-      <div class="card-content">
-        <small>Revenue</small>
-        <strong>{{ totalRevenue | currency:'USD':'symbol':'1.0-0' }}</strong>
-      </div>
-    </article>
-  </section>
-
-  <!-- FILTERS -->
-  <div class="filter-container">
-    <div class="filter-bar">
-      <button
-        *ngFor="let f of filters"
-        class="filter-pill"
-        [class.is-active]="activeFilter === f"
-        (click)="applyFilter(f)">
-        {{ f }}
-      </button>
+  <!-- Compteurs -->
+  <div class="grid grid-cols-3 gap-4 mb-6">
+    <div class="card card-pad">
+      <p class="text-[11px] font-extrabold uppercase tracking-[.12em] text-ink-400">Revenu (hors annulées)</p>
+      <p class="mt-1 text-lg sm:text-2xl font-extrabold">{{ totalRevenue | number:'1.0-0' }} <span class="text-[13px] text-ink-400">TND</span></p>
+    </div>
+    <div class="card card-pad">
+      <p class="text-[11px] font-extrabold uppercase tracking-[.12em] text-ink-400">Confirmées</p>
+      <p class="mt-1 text-lg sm:text-2xl font-extrabold text-emerald-600">{{ confirmedCount }}</p>
+    </div>
+    <div class="card card-pad">
+      <p class="text-[11px] font-extrabold uppercase tracking-[.12em] text-ink-400">En attente</p>
+      <p class="mt-1 text-lg sm:text-2xl font-extrabold text-amber-600">{{ pendingCount }}</p>
     </div>
   </div>
 
-  <p class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</p>
-
-  <!-- BOOKINGS LIST (Mobile Card Style) -->
-  <div class="bookings-list" *ngIf="!loading">
-    <div *ngIf="filtered.length; else emptyState">
-      <div class="booking-card" *ngFor="let b of filtered">
-        <div class="card-header">
-          <span class="booking-id">#{{ b.id }}</span>
-          <span class="chip" [ngClass]="statusClass(b.status)">{{ b.status }}</span>
-        </div>
-
-        <div class="card-body">
-          <div class="customer-info">
-            <span class="material-symbols-outlined">person</span>
-            <strong>{{ b.customer_name }}</strong>
-          </div>
-          <div class="vehicle-info">
-            <span class="material-symbols-outlined">directions_car</span>
-            <span>{{ b.vehicle_brand }} {{ b.vehicle_model }}</span>
-          </div>
-          <div class="date-info">
-            <span class="material-symbols-outlined">calendar_today</span>
-            <span>{{ b.start_date | date:'MMM d' }} → {{ b.end_date | date:'MMM d' }}</span>
-          </div>
-        </div>
-
-        <div class="card-footer">
-          <div class="price-info">
-            <span class="price-label">Total Price</span>
-            <span class="price-value">{{ b.total_price | currency }}</span>
-          </div>
-          
-          <div class="card-actions">
-            <button class="btn-icon confirm" 
-                    *ngIf="b.status !== 'CONFIRMED'"
-                    (click)="updateStatus(b,'CONFIRMED')"
-                    [disabled]="updatingId === b.id">
-              <span class="material-symbols-outlined">done</span>
-              Confirm
-            </button>
-            <button class="btn-icon cancel" 
-                    *ngIf="b.status !== 'CANCELLED'"
-                    (click)="updateStatus(b,'CANCELLED')"
-                    [disabled]="updatingId === b.id">
-              <span class="material-symbols-outlined">close</span>
-              Cancel
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <ng-template #emptyState>
-      <div class="empty-view">
-        <span class="material-symbols-outlined">search_off</span>
-        <p>No bookings found for this filter</p>
-      </div>
-    </ng-template>
+  <!-- Filtres -->
+  <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 mb-5">
+    <button *ngFor="let f of filters" (click)="applyFilter(f)"
+            [class]="activeFilter === f
+              ? 'chip bg-ink-950 text-white !px-4 !py-2 cursor-pointer shrink-0'
+              : 'chip bg-white text-ink-500 border border-ink-200 !px-4 !py-2 cursor-pointer hover:border-ink-300 shrink-0'">
+      {{ f === 'ALL' ? 'Toutes' : f === 'PENDING' ? 'En attente' : f === 'CONFIRMED' ? 'Confirmées' : 'Annulées' }}
+    </button>
   </div>
 
-  <div class="loader" *ngIf="loading">
-    <div class="spinner"></div>
+  <!-- Chargement -->
+  <div *ngIf="loading" class="space-y-4">
+    <div class="skeleton h-24"></div>
+    <div class="skeleton h-24"></div>
+    <div class="skeleton h-24"></div>
   </div>
 
-  <!-- DRAWER OVERLAY -->
-  <div class="drawer-overlay" [class.active]="showForm" (click)="closeForm()"></div>
+  <!-- Vide -->
+  <div *ngIf="!loading && filtered.length === 0" class="empty-state">
+    <span class="material-symbols-outlined">event_upcoming</span>
+    <h3 class="text-lg font-extrabold">Aucune réservation</h3>
+    <p class="text-sm text-ink-500">Aucun résultat pour ce filtre.</p>
+  </div>
 
-  <!-- NEW BOOKING DRAWER -->
-  <aside class="booking-drawer" [class.open]="showForm">
-    <header class="drawer-header">
-      <div class="header-content">
-        <h2>New Booking</h2>
-        <p>Enter reservation details</p>
+  <!-- Liste -->
+  <div *ngIf="!loading && filtered.length" class="space-y-4">
+    <article *ngFor="let b of filtered" class="card card-pad">
+      <div class="flex flex-col lg:flex-row lg:items-center gap-4">
+
+        <div class="flex-1 min-w-0">
+          <div class="flex flex-wrap items-center gap-2.5">
+            <h2 class="font-extrabold">{{ b.customer_name || 'Client #' + b.customer_id }}</h2>
+            <span class="{{ statusClass(b.status) }}"><span class="chip-dot"></span>{{ b.status }}</span>
+          </div>
+          <p class="mt-1.5 text-sm text-ink-500 flex flex-wrap items-center gap-x-4 gap-y-1">
+            <span class="inline-flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[17px]">directions_car</span>
+              {{ b.vehicle_brand }} {{ b.vehicle_model }}
+            </span>
+            <span class="inline-flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[17px]">calendar_today</span>
+              {{ b.start_date | date:'dd/MM/yyyy' }} → {{ b.end_date | date:'dd/MM/yyyy' }}
+            </span>
+            <span class="inline-flex items-center gap-1.5 font-extrabold text-ink-900">
+              {{ b.total_price | number:'1.0-0' }} TND
+            </span>
+          </p>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-2 shrink-0">
+          <button *ngIf="b.status !== 'CONFIRMED'" (click)="updateStatus(b, 'CONFIRMED')"
+                  class="btn-sm btn bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                  [disabled]="updatingId === b.id">
+            <span class="material-symbols-outlined text-[18px]">check</span>
+            Confirmer
+          </button>
+          <button *ngIf="b.status !== 'CANCELLED'" (click)="updateStatus(b, 'CANCELLED')"
+                  class="btn-danger btn-sm" [disabled]="updatingId === b.id">
+            <span class="material-symbols-outlined text-[18px]">close</span>
+            Annuler
+          </button>
+          <button *ngIf="b.status !== 'PENDING'" (click)="updateStatus(b, 'PENDING')"
+                  class="btn-ghost btn-sm" [disabled]="updatingId === b.id">
+            <span class="material-symbols-outlined text-[18px]">undo</span>
+          </button>
+        </div>
       </div>
-      <button class="close-btn" (click)="closeForm()">
+    </article>
+  </div>
+</div>
+
+<!-- ============ Modale : nouvelle réservation ============ -->
+<div *ngIf="showForm" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+  <div class="absolute inset-0 bg-ink-950/60 backdrop-blur-sm animate-fade-in" (click)="closeForm()"></div>
+
+  <div class="relative w-full sm:max-w-lg bg-white rounded-t-3xl sm:rounded-3xl shadow-card-lg max-h-[92vh] overflow-y-auto scrollbar-thin animate-fade-up">
+    <div class="sticky top-0 bg-white/95 backdrop-blur border-b border-ink-100 px-6 py-4 flex items-center justify-between rounded-t-3xl">
+      <h2 class="text-lg font-extrabold">Nouvelle réservation</h2>
+      <button (click)="closeForm()" class="btn-icon" aria-label="Fermer">
         <span class="material-symbols-outlined">close</span>
       </button>
-    </header>
-
-    <div class="drawer-body">
-      <div class="form-group">
-        <label>Customer</label>
-        <div class="select-wrapper">
-          <select [(ngModel)]="bookingForm.customer_id">
-            <option [ngValue]="null">Select Customer</option>
-            <option *ngFor="let c of customers" [value]="c.id">{{ c.full_name }}</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Vehicle</label>
-        <div class="select-wrapper">
-          <select [(ngModel)]="bookingForm.vehicle_id">
-            <option [ngValue]="null">Select Vehicle</option>
-            <option *ngFor="let v of vehicles"
-                    [value]="v.id"
-                    [disabled]="isVehicleUnavailable(v.id)">
-              {{ v.brand }} {{ v.model }} {{ isVehicleUnavailable(v.id) ? '(Unavailable)' : '' }}
-            </option>
-          </select>
-        </div>
-      </div>
-
-      <div class="date-grid">
-        <div class="form-group">
-          <label>Start Date</label>
-          <input type="date" [(ngModel)]="bookingForm.start_date">
-        </div>
-        <div class="form-group">
-          <label>End Date</label>
-          <input type="date" [(ngModel)]="bookingForm.end_date">
-        </div>
-      </div>
-
-      <div class="estimate-panel" *ngIf="bookingForm.vehicle_id && bookingForm.start_date && bookingForm.end_date">
-        <div class="panel-header">
-          <span class="material-symbols-outlined">receipt_long</span>
-          <h3>Booking Estimate</h3>
-        </div>
-        <div class="estimate-row">
-          <span>Days</span>
-          <strong>{{ getDays() }}</strong>
-        </div>
-        <div class="estimate-row">
-          <span>Price/day</span>
-          <strong>{{ getSelectedVehiclePrice() | currency }}</strong>
-        </div>
-        <div class="estimate-total">
-          <span>Total</span>
-          <strong>{{ getPreviewPrice() | currency }}</strong>
-        </div>
-      </div>
     </div>
 
-    <footer class="drawer-footer">
-      <button class="btn-secondary" (click)="closeForm()">Cancel</button>
-      <button class="btn-primary" (click)="saveBooking()">Create Booking</button>
-    </footer>
-  </aside>
+    <div class="p-6 space-y-4">
+      <label class="block">
+        <span class="label">Client</span>
+        <select class="select" [(ngModel)]="bookingForm.customer_id">
+          <option [ngValue]="null" disabled>Choisir un client…</option>
+          <option *ngFor="let c of customers" [ngValue]="c.id">{{ c.full_name }} — {{ c.cin }}</option>
+        </select>
+      </label>
+
+      <div class="grid grid-cols-2 gap-4">
+        <label class="block">
+          <span class="label">Départ</span>
+          <input type="date" class="input" [(ngModel)]="bookingForm.start_date" />
+        </label>
+        <label class="block">
+          <span class="label">Retour</span>
+          <input type="date" class="input" [(ngModel)]="bookingForm.end_date" />
+        </label>
+      </div>
+
+      <label class="block">
+        <span class="label">Véhicule</span>
+        <select class="select" [(ngModel)]="bookingForm.vehicle_id">
+          <option [ngValue]="null" disabled>Choisir un véhicule…</option>
+          <option *ngFor="let v of vehicles" [ngValue]="v.id" [disabled]="isVehicleUnavailable(v.id)">
+            {{ v.brand }} {{ v.model }} — {{ v.price_per_day }} TND/j
+            {{ isVehicleUnavailable(v.id) ? ' (indisponible sur ces dates)' : '' }}
+          </option>
+        </select>
+      </label>
+
+      <!-- Aperçu prix -->
+      <div *ngIf="getPreviewPrice() > 0" class="rounded-2xl bg-ink-50 border border-ink-100 p-4 animate-fade-in">
+        <div class="flex items-center justify-between text-sm font-semibold text-ink-500">
+          <span>{{ getSelectedVehiclePrice() }} TND × {{ getDays() }} jour{{ getDays() > 1 ? 's' : '' }}</span>
+          <span class="text-lg font-extrabold text-brand-600">{{ getPreviewPrice() }} TND</span>
+        </div>
+      </div>
+
+      <div class="flex gap-3 pt-2 pb-safe">
+        <button (click)="saveBooking()" class="btn-primary flex-1">Créer la réservation</button>
+        <button (click)="closeForm()" class="btn-ghost">Annuler</button>
+      </div>
+    </div>
+  </div>
 </div>

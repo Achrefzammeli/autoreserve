@@ -175,9 +175,9 @@ export class Bookings implements OnInit {
 
   statusClass(status: string): string {
     return {
-      CONFIRMED: 'chip--success',
-      PENDING: 'chip--pending',
-      CANCELLED: 'chip--cancelled',
+      CONFIRMED: 'chip-success',
+      PENDING: 'chip-warning',
+      CANCELLED: 'chip-danger',
     }[status] ?? '';
   }
 
