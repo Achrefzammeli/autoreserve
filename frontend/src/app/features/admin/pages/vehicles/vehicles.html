@@ -1,290 +1,185 @@
-<div class="vehicles-page">
+<div class="container-app py-8 lg:py-10">
 
-  <header class="page-header">
+  <!-- En-tête -->
+  <header class="flex flex-wrap items-end justify-between gap-4 mb-8">
     <div>
-      <span class="eyebrow">Admin / Vehicles</span>
-      <h1>{{ editingId() ? 'Edit Vehicle' : 'Fleet Inventory' }}</h1>
-      <p>Manage vehicles, pricing and availability.</p>
-    </div>
-
-    <div class="page-header__actions">
-      <button
-        type="button"
-        class="action-pill action-pill--ghost"
-        (click)="loadVehicles()"
-      >
-        Refresh
-      </button>
+      <span class="eyebrow">Administration</span>
+      <h1 class="mt-2 text-2xl sm:text-3xl font-extrabold tracking-tight">Gestion des véhicules</h1>
+      <p class="mt-1.5 text-ink-500">Ajoutez, modifiez et suivez l'état de votre flotte.</p>
     </div>
   </header>
 
-  <section class="summary-grid">
+  <div *ngIf="errorMessage" class="alert-error mb-6">
+    <span class="material-symbols-outlined text-[20px]">error</span>
+    {{ errorMessage }}
+  </div>
 
-    <article class="summary-card">
-      <small>Total Vehicles</small>
-      <strong>{{ vehicles.length }}</strong>
-    </article>
+  <!-- Compteurs -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="card card-pad flex items-center gap-4">
+      <span class="w-11 h-11 rounded-2xl bg-ink-100 text-ink-700 flex items-center justify-center shrink-0">
+        <span class="material-symbols-outlined">garage</span>
+      </span>
+      <div>
+        <p class="text-[11px] font-extrabold uppercase tracking-[.12em] text-ink-400">Total</p>
+        <p class="text-xl font-extrabold">{{ vehicles.length }}</p>
+      </div>
+    </div>
+    <div class="card card-pad flex items-center gap-4">
+      <span class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+        <span class="material-symbols-outlined">check_circle</span>
+      </span>
+      <div>
+        <p class="text-[11px] font-extrabold uppercase tracking-[.12em] text-ink-400">Disponibles</p>
+        <p class="text-xl font-extrabold">{{ availableCount }}</p>
+      </div>
+    </div>
+    <div class="card card-pad flex items-center gap-4">
+      <span class="w-11 h-11 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+        <span class="material-symbols-outlined">build</span>
+      </span>
+      <div>
+        <p class="text-[11px] font-extrabold uppercase tracking-[.12em] text-ink-400">Maintenance</p>
+        <p class="text-xl font-extrabold">{{ maintenanceCount }}</p>
+      </div>
+    </div>
+    <div class="card card-pad flex items-center gap-4">
+      <span class="w-11 h-11 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center shrink-0">
+        <span class="material-symbols-outlined">block</span>
+      </span>
+      <div>
+        <p class="text-[11px] font-extrabold uppercase tracking-[.12em] text-ink-400">Indisponibles</p>
+        <p class="text-xl font-extrabold">{{ unavailableCount }}</p>
+      </div>
+    </div>
+  </div>
 
-    <article class="summary-card">
-      <small>Available</small>
-      <strong>{{ availableCount }}</strong>
-    </article>
+  <div class="grid lg:grid-cols-[1fr_1.4fr] gap-6 items-start">
 
-    <article class="summary-card">
-      <small>Maintenance</small>
-      <strong>{{ maintenanceCount }}</strong>
-    </article>
-
-    <article class="summary-card">
-      <small>Unavailable</small>
-      <strong>{{ unavailableCount }}</strong>
-    </article>
-
-  </section>
-
-  <section class="content-grid">
-
-    <!-- FORM -->
-
-    <article class="panel panel--form">
-
-      <div class="panel__header">
-        <h2>
-          {{ editingId() ? 'Update Vehicle' : 'Add Vehicle' }}
+    <!-- Formulaire -->
+    <form [formGroup]="form" (ngSubmit)="submit()" class="card card-pad lg:sticky lg:top-8">
+      <div class="flex items-center justify-between gap-3 mb-5">
+        <h2 class="text-lg font-extrabold">
+          {{ editingId() ? 'Modifier le véhicule' : 'Nouveau véhicule' }}
         </h2>
+        <span *ngIf="editingId()" class="chip-info">Édition #{{ editingId() }}</span>
       </div>
 
-      <form
-        class="vehicle-form"
-        [formGroup]="form"
-        (ngSubmit)="submit()"
-      >
-
-        <label>
-          <span>Brand</span>
-          <input
-            type="text"
-            formControlName="brand"
-            placeholder="Tesla"
-          />
+      <div class="grid sm:grid-cols-2 gap-4">
+        <label class="block">
+          <span class="label">Marque</span>
+          <input type="text" formControlName="brand" class="input" placeholder="Ex : BMW" />
         </label>
-
-        <label>
-          <span>Model</span>
-          <input
-            type="text"
-            formControlName="model"
-            placeholder="Model Y"
-          />
+        <label class="block">
+          <span class="label">Modèle</span>
+          <input type="text" formControlName="model" class="input" placeholder="Ex : Série 3" />
         </label>
-
-        <label>
-          <span>Price Per Day</span>
-          <input
-            type="number"
-            formControlName="price_per_day"
-            min="1"
-          />
+        <label class="block">
+          <span class="label">Prix / jour (TND)</span>
+          <input type="number" formControlName="price_per_day" class="input" min="1" />
         </label>
-
-        <label>
-          <span>Status</span>
-
-          <select formControlName="status">
-            <option value="AVAILABLE">
-              Available
-            </option>
-
-            <option value="MAINTENANCE">
-              Maintenance
-            </option>
-
-            <option value="UNAVAILABLE">
-              Unavailable
-            </option>
+        <label class="block">
+          <span class="label">Statut</span>
+          <select formControlName="status" class="select">
+            <option value="AVAILABLE">Disponible</option>
+            <option value="MAINTENANCE">Maintenance</option>
+            <option value="UNAVAILABLE">Indisponible</option>
           </select>
         </label>
-
-        <label class="form-span-2">
-          <span>Vehicle Image</span>
-
-          <input
-            type="file"
-            accept="image/*"
-            (change)="onImagePicked($event)"
-          />
+        <label class="block sm:col-span-2">
+          <span class="label">Caractéristiques</span>
+          <textarea formControlName="specs" rows="3" class="textarea"
+                    placeholder="Boîte automatique · 5 places · Climatisation…"></textarea>
         </label>
 
-        <div
-          class="image-preview form-span-2"
-          *ngIf="imagePreview()"
-        >
-          <img
-            [src]="imagePreview()!"
-            alt="Preview"
-            style="max-width:250px;border-radius:12px;"
-          />
+        <!-- Image -->
+        <div class="sm:col-span-2">
+          <span class="label">Photo du véhicule</span>
 
-          <button
-            type="button"
-            class="text-btn"
-            (click)="clearImage()"
-          >
-            Remove Image
-          </button>
-        </div>
-
-        <label class="form-span-2">
-          <span>Specifications</span>
-
-          <textarea
-            rows="4"
-            formControlName="specs"
-            placeholder="Automatic, Air conditioning, 5 seats..."
-          ></textarea>
-        </label>
-
-        <div class="form-actions form-span-2">
-
-          <button
-            type="submit"
-            class="action-pill action-pill--primary"
-            [disabled]="saving"
-          >
-            {{
-              saving
-                ? 'Saving...'
-                : editingId()
-                  ? 'Update Vehicle'
-                  : 'Create Vehicle'
-            }}
-          </button>
-
-          <button
-            *ngIf="editingId()"
-            type="button"
-            class="action-pill action-pill--ghost"
-            (click)="cancelEdit()"
-          >
-            Cancel
-          </button>
-
-        </div>
-
-      </form>
-
-      <p
-        class="error-banner"
-        *ngIf="errorMessage"
-      >
-        {{ errorMessage }}
-      </p>
-
-    </article>
-
-    <!-- VEHICLE LIST -->
-
-    <article class="panel panel--list">
-
-      <div class="panel__header">
-        <h2>Fleet List</h2>
-      </div>
-
-      <div
-        class="vehicle-list"
-        *ngIf="vehicles.length > 0"
-      >
-
-        <article
-          class="vehicle-card"
-          *ngFor="let vehicle of vehicles"
-        >
-
-          <div class="vehicle-card__media">
-
-            <img
-              *ngIf="imageUrl(vehicle); else defaultVehicle"
-              [src]="imageUrl(vehicle)"
-              [alt]="vehicle.brand + ' ' + vehicle.model"
-            />
-
-            <ng-template #defaultVehicle>
-              <span class="material-symbols-outlined">
-                directions_car
-              </span>
-            </ng-template>
-
+          <div *ngIf="imagePreview()" class="relative rounded-2xl overflow-hidden border border-ink-100 mb-3">
+            <img [src]="imagePreview()" alt="Aperçu" class="w-full h-44 object-cover" />
+            <button type="button" (click)="clearImage()"
+                    class="absolute top-3 right-3 w-9 h-9 rounded-full bg-ink-950/70 text-white flex items-center justify-center hover:bg-ink-950 transition-colors"
+                    aria-label="Retirer l'image">
+              <span class="material-symbols-outlined text-[18px]">close</span>
+            </button>
           </div>
 
-          <div class="vehicle-card__body">
+          <label class="flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-ink-200 bg-ink-50/60 px-4 py-7 cursor-pointer hover:border-brand-400 hover:bg-brand-50/40 transition-colors">
+            <span class="material-symbols-outlined text-ink-400 text-[30px]">add_photo_alternate</span>
+            <span class="text-sm font-bold text-ink-500">Cliquez pour choisir une image</span>
+            <span class="text-[12px] text-ink-400">JPG, PNG — 5 Mo max</span>
+            <input type="file" accept="image/*" class="hidden" (change)="onImagePicked($event)" />
+          </label>
+        </div>
+      </div>
 
-            <div class="vehicle-card__top">
+      <div class="flex gap-3 mt-6">
+        <button type="submit" class="btn-primary flex-1" [disabled]="saving">
+          <span *ngIf="saving" class="w-5 h-5 rounded-full border-2 border-white/40 border-t-white animate-spin"></span>
+          {{ saving ? 'Enregistrement…' : (editingId() ? 'Mettre à jour' : 'Ajouter le véhicule') }}
+        </button>
+        <button *ngIf="editingId()" type="button" (click)="cancelEdit()" class="btn-ghost">Annuler</button>
+      </div>
+    </form>
 
-              <div>
-                <h3>
-                  {{ vehicle.brand }}
-                  {{ vehicle.model }}
-                </h3>
-              </div>
+    <!-- Liste -->
+    <div class="space-y-4">
+      <div *ngIf="loading" class="space-y-4">
+        <div class="skeleton h-36"></div>
+        <div class="skeleton h-36"></div>
+        <div class="skeleton h-36"></div>
+      </div>
 
-              <span
-                class="vehicle-status"
-                [ngClass]="statusClass(vehicle.status)"
-              >
-                {{ statusLabel(vehicle.status) }}
-              </span>
+      <div *ngIf="!loading && vehicles.length === 0" class="empty-state">
+        <span class="material-symbols-outlined">garage</span>
+        <h3 class="text-lg font-extrabold">Aucun véhicule dans la flotte</h3>
+        <p class="text-sm text-ink-500">Ajoutez votre premier véhicule via le formulaire.</p>
+      </div>
 
+      <article *ngFor="let v of vehicles" class="card overflow-hidden sm:flex">
+        <!-- Image -->
+        <div class="relative sm:w-48 h-40 sm:h-auto shrink-0 bg-gradient-to-br from-ink-100 to-ink-200">
+          <img *ngIf="imageUrl(v)" [src]="imageUrl(v)" [alt]="v.brand + ' ' + v.model"
+               loading="lazy" class="w-full h-full object-cover" />
+          <span *ngIf="!imageUrl(v)"
+                class="material-symbols-outlined absolute inset-0 flex items-center justify-center text-[48px] text-ink-300">
+            directions_car
+          </span>
+        </div>
+
+        <!-- Infos -->
+        <div class="flex-1 p-5 flex flex-col gap-3">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p class="text-[11px] font-extrabold uppercase tracking-[.12em] text-ink-400">{{ v.brand }}</p>
+              <h3 class="font-extrabold text-lg">{{ v.model }}</h3>
             </div>
-
-            <div class="vehicle-card__meta">
-
-              <span>
-                {{ vehicle.price_per_day }}
-                DT / day
-              </span>
-
-              <span *ngIf="vehicle.specs">
-                {{ vehicle.specs }}
-              </span>
-
-            </div>
-
-            <div class="vehicle-card__actions">
-
-              <button
-                type="button"
-                class="text-btn"
-                (click)="editVehicle(vehicle)"
-              >
-                Edit
-              </button>
-
-              <button
-                type="button"
-                class="text-btn"
-                (click)="deleteVehicle(vehicle.id)"
-              >
-                Delete
-              </button>
-
-            </div>
-
+            <span class="{{ statusClass(v.status) }}">
+              <span class="chip-dot"></span>
+              {{ statusLabel(v.status) }}
+            </span>
           </div>
 
-        </article>
+          <p *ngIf="v.specs" class="text-sm text-ink-500 line-clamp-2">{{ v.specs }}</p>
 
-      </div>
-
-      <div
-        class="empty-state"
-        *ngIf="!loading && vehicles.length === 0"
-      >
-        <h3>No vehicles found</h3>
-        <p>Add your first vehicle.</p>
-      </div>
-
-    </article>
-
-  </section>
-
+          <div class="mt-auto pt-3 border-t border-ink-100 flex flex-wrap items-center justify-between gap-3">
+            <p class="font-extrabold text-lg">{{ v.price_per_day }} <span class="text-[13px] text-ink-400">TND/jour</span></p>
+            <div class="flex items-center gap-2">
+              <a [routerLink]="['/vehicles', v.id]" class="btn-ghost btn-sm" title="Voir la fiche publique">
+                <span class="material-symbols-outlined text-[18px]">visibility</span>
+              </a>
+              <button (click)="editVehicle(v)" class="btn-outline btn-sm">
+                <span class="material-symbols-outlined text-[18px]">edit</span>
+                Modifier
+              </button>
+              <button (click)="deleteVehicle(v.id)" class="btn-danger btn-sm">
+                <span class="material-symbols-outlined text-[18px]">delete</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
 </div>

@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 
 import { VehicleService } from '../../../../core/services/vehicle.service';
 import { Vehicle, VehicleFormData } from '../../../../core/models/vehicle.model';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-vehicles',
@@ -116,7 +117,7 @@ export class Vehicles implements OnInit {
       specs:         v.specs ?? '',
     });
     // show existing image as preview
-    this.imagePreview.set(v.image_url ? `http://localhost:8000${v.image_url}` : null);
+    this.imagePreview.set(this.imageUrl(v));
     this.selectedImage.set(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -149,11 +150,15 @@ export class Vehicles implements OnInit {
   get maintenanceCount():  number { return this.vehicles.filter(v => v.status === 'MAINTENANCE').length; }
   get unavailableCount():  number { return this.vehicles.filter(v => v.status === 'UNAVAILABLE').length; }
 
-  statusLabel(status: string): string { return status.replace('_', ' '); }
-  statusClass(status: string): string { return `vehicle-status--${status.toLowerCase()}`; }
+  statusLabel(status: string): string {
+    return { AVAILABLE: 'Disponible', MAINTENANCE: 'Maintenance', UNAVAILABLE: 'Indisponible' }[status] ?? status;
+  }
+  statusClass(status: string): string {
+    return { AVAILABLE: 'chip-success', MAINTENANCE: 'chip-warning', UNAVAILABLE: 'chip-danger' }[status] ?? 'chip-neutral';
+  }
 
   imageUrl(v: Vehicle): string | null {
     if (!v.image_url) return null;
-    return v.image_url.startsWith('http') ? v.image_url : `http://localhost:8000${v.image_url}`;
+    return v.image_url.startsWith('http') ? v.image_url : `${environment.apiUrl}${v.image_url}`;
   }
 }

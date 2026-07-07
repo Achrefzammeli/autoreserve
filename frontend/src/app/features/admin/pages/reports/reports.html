@@ -1,111 +1,128 @@
-<div class="reports-page">
+<div class="container-app py-8 lg:py-10">
 
-  <header class="page-header">
-    <div>
-      <span class="eyebrow">Admin / Reports</span>
-      <h1>Reports & Analytics</h1>
-      <p>Revenue breakdown, vehicle performance, and monthly trends.</p>
-    </div>
-    <button type="button" class="action-pill action-pill--ghost" (click)="loadReports()">
-      <span class="material-symbols-outlined">refresh</span>
-      Refresh
-    </button>
+  <!-- En-tête -->
+  <header class="mb-8">
+    <span class="eyebrow">Administration</span>
+    <h1 class="mt-2 text-2xl sm:text-3xl font-extrabold tracking-tight">Rapports & analyses</h1>
+    <p class="mt-1.5 text-ink-500">Performance de la flotte et revenus.</p>
   </header>
 
-  <!-- Loading -->
-  <div class="empty-state" *ngIf="loading">
-    <span class="material-symbols-outlined spin">autorenew</span>
-    <p>Loading reports...</p>
+  <div *ngIf="errorMessage" class="alert-error mb-6">
+    <span class="material-symbols-outlined text-[20px]">error</span>
+    {{ errorMessage }}
   </div>
 
-  <p class="error-banner" *ngIf="errorMessage">{{ errorMessage }}</p>
+  <div *ngIf="loading" class="grid lg:grid-cols-2 gap-4">
+    <div class="skeleton h-80"></div>
+    <div class="skeleton h-80"></div>
+  </div>
 
   <ng-container *ngIf="!loading && reports">
 
-    <!-- Revenue by type -->
-    <div class="grid-2">
+    <div class="grid lg:grid-cols-2 gap-4 items-start">
 
-      <article class="panel">
-        <h3>Revenue by vehicle type</h3>
-        <p class="panel-sub">Total: {{ totalRevenue | currency:'USD':'symbol':'1.0-0' }}</p>
-
-        <div class="type-list">
-          <div class="type-row" *ngFor="let t of reports.revenue_by_type">
-            <div class="type-row__top">
-              <span class="type-label">{{ t.type }}</span>
-              <strong>{{ t.revenue | currency:'USD':'symbol':'1.0-0' }}</strong>
-            </div>
-            <div class="progress">
-              <span [style.width.%]="barHeight(t.revenue, maxTypeRevenue)"></span>
-            </div>
+      <!-- Revenu mensuel -->
+      <div class="card card-pad">
+        <div class="flex items-center justify-between gap-3 mb-6">
+          <div>
+            <h2 class="font-extrabold">Revenu mensuel</h2>
+            <p class="text-[13px] text-ink-500 mt-0.5">Évolution sur les derniers mois</p>
           </div>
-          <div class="empty-small" *ngIf="!reports.revenue_by_type.length">No data yet.</div>
+          <span class="chip-info">{{ totalRevenue | number:'1.0-0' }} TND</span>
         </div>
-      </article>
 
-      <!-- Bookings by type -->
-      <article class="panel">
-        <h3>Bookings by vehicle type</h3>
-        <p class="panel-sub">Distribution across fleet categories</p>
+        <div *ngIf="reports.monthly_revenue.length === 0" class="empty-state !py-10">
+          <span class="material-symbols-outlined !text-[30px]">monitoring</span>
+          <p class="text-sm font-semibold text-ink-500">Pas encore de données.</p>
+        </div>
 
-        <div class="type-list">
-          <div class="type-row" *ngFor="let t of reports.bookings_by_type">
-            <div class="type-row__top">
-              <span class="type-label">{{ t.type }}</span>
-              <strong>{{ t.count }} bookings</strong>
-            </div>
-            <div class="progress">
-              <span class="progress--accent"
-                [style.width.%]="barHeight(t.count, reports.bookings_by_type[0]?.count || 1)">
-              </span>
-            </div>
+        <div *ngIf="reports.monthly_revenue.length" class="flex items-end gap-2 h-56">
+          <div *ngFor="let m of reports.monthly_revenue" class="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
+            <span class="text-[11px] font-extrabold text-ink-500 opacity-0 group-hover:opacity-100 transition-opacity">
+              {{ m.revenue | number:'1.0-0' }}
+            </span>
+            <div class="w-full rounded-t-xl bg-gradient-to-t from-brand-600 to-brand-400 transition-all hover:from-brand-700"
+                 [style.height.%]="barHeight(m.revenue, maxMonthlyRevenue)"
+                 [title]="m.month + ' : ' + m.revenue + ' TND'"></div>
+            <span class="text-[11px] font-extrabold uppercase text-ink-400">{{ formatMonth(m.month) }}</span>
           </div>
-          <div class="empty-small" *ngIf="!reports.bookings_by_type.length">No data yet.</div>
         </div>
-      </article>
+      </div>
 
+      <!-- Revenu par type -->
+      <div class="card card-pad">
+        <h2 class="font-extrabold mb-1">Revenu par catégorie</h2>
+        <p class="text-[13px] text-ink-500 mb-6">Répartition des revenus par type de véhicule</p>
+
+        <div *ngIf="reports.revenue_by_type.length === 0" class="empty-state !py-10">
+          <span class="material-symbols-outlined !text-[30px]">donut_small</span>
+          <p class="text-sm font-semibold text-ink-500">Pas encore de données.</p>
+        </div>
+
+        <ul class="space-y-5">
+          <li *ngFor="let t of reports.revenue_by_type">
+            <div class="flex items-center justify-between text-sm font-bold mb-1.5">
+              <span>{{ t.type || 'Autre' }}</span>
+              <span class="text-ink-500">{{ t.revenue | number:'1.0-0' }} TND</span>
+            </div>
+            <div class="h-2.5 rounded-full bg-ink-100 overflow-hidden">
+              <div class="h-full rounded-full bg-brand-600"
+                   [style.width.%]="barHeight(t.revenue, maxTypeRevenue)"></div>
+            </div>
+          </li>
+        </ul>
+
+        <!-- Réservations par type -->
+        <div *ngIf="reports.bookings_by_type.length" class="mt-8 pt-6 border-t border-ink-100">
+          <h3 class="text-sm font-extrabold uppercase tracking-[.12em] text-ink-500 mb-4">Réservations par catégorie</h3>
+          <div class="flex flex-wrap gap-2">
+            <span *ngFor="let t of reports.bookings_by_type" class="chip-neutral !normal-case !text-[13px] !py-1.5">
+              {{ t.type || 'Autre' }} · <strong>{{ t.count }}</strong>
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Monthly revenue chart -->
-    <article class="panel" *ngIf="reports.monthly_revenue.length">
-      <h3>Monthly revenue</h3>
-      <p class="panel-sub">Revenue trend over time (confirmed + pending bookings)</p>
+    <!-- Top véhicules -->
+    <div class="card overflow-hidden mt-4">
+      <div class="p-5 sm:p-6 pb-0">
+        <h2 class="font-extrabold">Top véhicules</h2>
+        <p class="text-[13px] text-ink-500 mt-0.5">Les véhicules les plus réservés</p>
+      </div>
 
-      <div class="bar-chart">
-        <div class="bar-col" *ngFor="let m of reports.monthly_revenue">
-          <div class="bar-wrap">
-            <span class="bar-tooltip">{{ m.revenue | currency:'USD':'symbol':'1.0-0' }}</span>
-            <div class="bar" [style.height.%]="barHeight(m.revenue, maxMonthlyRevenue)"></div>
-          </div>
-          <span class="bar-label">{{ formatMonth(m.month) }}</span>
+      <div *ngIf="reports.top_vehicles.length === 0" class="p-6">
+        <div class="empty-state !py-10">
+          <span class="material-symbols-outlined !text-[30px]">directions_car</span>
+          <p class="text-sm font-semibold text-ink-500">Pas encore de données.</p>
         </div>
       </div>
-    </article>
 
-    <!-- Top vehicles -->
-    <article class="panel" *ngIf="reports.top_vehicles.length">
-      <h3>Top vehicles by bookings</h3>
-      <p class="panel-sub">Most requested vehicles in your fleet</p>
-
-      <div class="top-list">
-        <div class="top-row" *ngFor="let v of reports.top_vehicles; let i = index">
-          <span class="rank" [class.rank--gold]="i === 0" [class.rank--silver]="i === 1" [class.rank--bronze]="i === 2">
-            {{ i + 1 }}
-          </span>
-          <div class="top-row__info">
-            <strong>{{ v.brand }} {{ v.model }}</strong>
-            <span class="sub">{{ v.type }}</span>
-          </div>
-          <div class="top-row__bar">
-            <div class="progress">
-              <span [style.width.%]="barHeight(v.bookings_count, reports.top_vehicles[0].bookings_count)"></span>
-            </div>
-          </div>
-          <span class="top-row__count">{{ v.bookings_count }} bookings</span>
-        </div>
+      <div *ngIf="reports.top_vehicles.length" class="mt-4 overflow-x-auto scrollbar-thin">
+        <table class="table-modern min-w-[480px]">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Véhicule</th>
+              <th>Catégorie</th>
+              <th class="!text-right">Réservations</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let v of reports.top_vehicles; let i = index">
+              <td>
+                <span class="w-8 h-8 rounded-full inline-flex items-center justify-center font-extrabold text-[13px]"
+                      [class]="i === 0 ? 'bg-accent-400/20 text-accent-600' : 'bg-ink-100 text-ink-500'">
+                  {{ i + 1 }}
+                </span>
+              </td>
+              <td class="font-bold text-ink-900">{{ v.brand }} {{ v.model }}</td>
+              <td>{{ v.type || '—' }}</td>
+              <td class="!text-right font-extrabold text-ink-900">{{ v.bookings_count }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-    </article>
-
+    </div>
   </ng-container>
-
 </div>

@@ -1,5 +1,26 @@
 <app-navbar></app-navbar>
 
-<div class="client-content">
+<main class="min-h-screen bg-ink-50 pt-header pb-bottomnav">
   <router-outlet></router-outlet>
-</div>
+</main>
+
+<!-- Bottom nav mobile — espace client -->
+<nav class="bottomnav grid-cols-4" aria-label="Navigation client">
+  <a routerLink="/client/dashboard" routerLinkActive="is-active" class="bottomnav-item">
+    <span class="material-symbols-outlined">space_dashboard</span>
+    Accueil
+  </a>
+  <a routerLink="/fleet" routerLinkActive="is-active" class="bottomnav-item">
+    <span class="material-symbols-outlined">directions_car</span>
+    Flotte
+  </a>
+  <a routerLink="/client/bookings" routerLinkActive="is-active"
+     [routerLinkActiveOptions]="{exact: true}" class="bottomnav-item">
+    <span class="material-symbols-outlined">event_available</span>
+    Résas
+  </a>
+  <a routerLink="/client/profile" routerLinkActive="is-active" class="bottomnav-item">
+    <span class="material-symbols-outlined">person</span>
+    Profil
+  </a>
+</nav>

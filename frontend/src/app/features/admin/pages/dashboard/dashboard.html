@@ -1,222 +1,158 @@
-<div class="admin-shell">
+<div class="container-app py-8 lg:py-10">
 
-  <!-- Topbar -->
-  <header class="admin-topbar">
+  <!-- En-tête -->
+  <header class="flex flex-wrap items-end justify-between gap-4 mb-8">
     <div>
-      <h2>Fleet Overview</h2>
-      <p>Real-time performance analytics and operations management.</p>
+      <span class="eyebrow">Administration</span>
+      <h1 class="mt-2 text-2xl sm:text-3xl font-extrabold tracking-tight">Tableau de bord</h1>
+      <p class="mt-1.5 text-ink-500">Vue d'ensemble de votre activité.</p>
     </div>
-    <div class="admin-topbar__actions">
-      <a routerLink="/admin/vehicles" class="admin-btn admin-btn--ghost">
-        <span class="material-symbols-outlined">directions_car</span>
-        Manage Fleet
-      </a>
-      <a routerLink="/admin/bookings" class="admin-btn admin-btn--primary">
-        <span class="material-symbols-outlined">calendar_month</span>
-        All Bookings
-      </a>
-    </div>
+    <a routerLink="/admin/reports" class="btn-outline">
+      <span class="material-symbols-outlined text-[20px]">monitoring</span>
+      Voir les rapports
+    </a>
   </header>
 
-  <!-- Loading -->
-  <div class="empty-state" *ngIf="loading">
-    <span class="material-symbols-outlined spin">autorenew</span>
-    <p>Loading dashboard...</p>
+  <div *ngIf="errorMessage" class="alert-error mb-6">
+    <span class="material-symbols-outlined text-[20px]">error</span>
+    {{ errorMessage }}
+  </div>
+
+  <!-- Squelettes -->
+  <div *ngIf="loading" class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="skeleton h-36"></div>
+    <div class="skeleton h-36"></div>
+    <div class="skeleton h-36"></div>
+    <div class="skeleton h-36"></div>
   </div>
 
   <ng-container *ngIf="!loading && stats">
 
-    <!-- KPI cards -->
-    <section class="admin-stats grid-4">
-      <article class="admin-stat-card">
-        <div class="admin-stat-card__head">
-          <span class="material-symbols-outlined stat-icon stat-icon--blue">calendar_today</span>
-        </div>
-        <div>
-          <p>Total Bookings</p>
-          <h3>{{ stats.bookings.total }}</h3>
-        </div>
-      </article>
-
-      <article class="admin-stat-card">
-        <div class="admin-stat-card__head">
-          <span class="material-symbols-outlined stat-icon stat-icon--blue">payments</span>
-        </div>
-        <div>
-          <p>Total Revenue</p>
-          <h3>{{ stats.revenue.total | currency:'USD':'symbol':'1.0-0' }}</h3>
-        </div>
-      </article>
-
-      <article class="admin-stat-card">
-        <div class="admin-stat-card__head">
-          <span class="material-symbols-outlined stat-icon stat-icon--blue">directions_car</span>
-          <span class="stat-badge">{{ stats.vehicles.available }}/{{ stats.vehicles.total }}</span>
-        </div>
-        <div>
-          <p>Available Vehicles</p>
-          <h3>{{ stats.vehicles.available }}</h3>
-        </div>
-      </article>
-
-      <article class="admin-stat-card">
-        <div class="admin-stat-card__head">
-          <span class="material-symbols-outlined stat-icon stat-icon--red">build</span>
-          <span class="stat-badge stat-badge--danger" *ngIf="stats.vehicles.maintenance > 0">
-            Action Required
+    <!-- Statistiques -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="card card-pad">
+        <div class="flex items-center justify-between">
+          <span class="w-11 h-11 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center">
+            <span class="material-symbols-outlined">payments</span>
           </span>
         </div>
-        <div>
-          <p>In Maintenance</p>
-          <h3>{{ stats.vehicles.maintenance }}</h3>
-        </div>
-      </article>
-    </section>
-
-    <!-- Two-col section -->
-    <section class="admin-grid admin-grid--two">
-
-      <!-- Booking status breakdown -->
-      <article class="admin-panel">
-        <h3>Booking Status</h3>
-        <div class="allocation-list">
-
-          <div class="allocation-row">
-            <div class="allocation-row__top">
-              <span>Confirmed</span>
-              <span>{{ stats.bookings.confirmed }}</span>
-            </div>
-            <div class="progress">
-              <span [style.width.%]="stats.bookings.total ? (stats.bookings.confirmed / stats.bookings.total) * 100 : 0"
-                    class="progress--success"></span>
-            </div>
-          </div>
-
-          <div class="allocation-row">
-            <div class="allocation-row__top">
-              <span>Pending</span>
-              <span>{{ stats.bookings.pending }}</span>
-            </div>
-            <div class="progress">
-              <span [style.width.%]="stats.bookings.total ? (stats.bookings.pending / stats.bookings.total) * 100 : 0"
-                    class="progress--pending"></span>
-            </div>
-          </div>
-
-          <div class="allocation-row">
-            <div class="allocation-row__top">
-              <span>Cancelled</span>
-              <span>{{ stats.bookings.cancelled }}</span>
-            </div>
-            <div class="progress">
-              <span [style.width.%]="stats.bookings.total ? (stats.bookings.cancelled / stats.bookings.total) * 100 : 0"
-                    class="progress--cancelled"></span>
-            </div>
-          </div>
-
-        </div>
-
-        <div class="efficiency-note">
-          <p>Fleet utilization</p>
-          <span>{{ fleetUtilizationPct }}% of vehicles are currently booked or unavailable.</span>
-        </div>
-      </article>
-
-      <!-- Customers + quick links -->
-      <article class="admin-panel">
-        <h3>Quick Overview</h3>
-        <div class="quick-grid">
-          <div class="quick-card">
-            <span class="material-symbols-outlined">group</span>
-            <strong>{{ stats.customers.total }}</strong>
-            <small>Registered clients</small>
-          </div>
-          <div class="quick-card">
-            <span class="material-symbols-outlined">directions_car</span>
-            <strong>{{ stats.vehicles.total }}</strong>
-            <small>Total vehicles</small>
-          </div>
-          <div class="quick-card quick-card--warn" *ngIf="stats.bookings.pending > 0">
-            <span class="material-symbols-outlined">schedule</span>
-            <strong>{{ stats.bookings.pending }}</strong>
-            <small>Pending approval</small>
-          </div>
-          <div class="quick-card">
-            <span class="material-symbols-outlined">payments</span>
-            <strong>{{ stats.revenue.total | currency:'USD':'symbol':'1.0-0' }}</strong>
-            <small>Total revenue</small>
-          </div>
-        </div>
-
-        <div class="panel-links">
-          <a routerLink="/admin/bookings" class="panel-link">
-            <span class="material-symbols-outlined">arrow_forward</span>
-            Review pending bookings
-          </a>
-          <a routerLink="/admin/customers" class="panel-link">
-            <span class="material-symbols-outlined">arrow_forward</span>
-            View all customers
-          </a>
-          <a routerLink="/admin/reports" class="panel-link">
-            <span class="material-symbols-outlined">arrow_forward</span>
-            Revenue reports
-          </a>
-        </div>
-      </article>
-
-    </section>
-
-    <!-- Recent bookings table -->
-    <section class="admin-panel admin-panel--table" *ngIf="recentBookings.length">
-      <div class="admin-panel__header admin-panel__header--table">
-        <h3>Recent Bookings</h3>
-        <a routerLink="/admin/bookings" class="admin-btn admin-btn--ghost admin-btn--sm">
-          View all
-        </a>
+        <p class="mt-4 text-[11px] font-extrabold uppercase tracking-[.14em] text-ink-400">Revenu total</p>
+        <p class="mt-1 text-xl sm:text-3xl font-extrabold text-ink-950">
+          {{ stats.revenue.total | number:'1.0-0' }} <span class="text-sm font-bold text-ink-400">TND</span>
+        </p>
       </div>
 
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Customer</th>
-              <th>Vehicle</th>
-              <th>Dates</th>
-              <th>Status</th>
-              <th class="text-right">Revenue</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let b of recentBookings">
-              <td><span class="sub">#{{ b.id }}</span></td>
-              <td>
-                <strong>{{ b.customer_name ?? '—' }}</strong>
-                <span class="sub">
-  {{ b.customer_name }}
-</span>
-              </td>
-              <td>
-                <strong>{{ b.vehicle_brand }} {{ b.vehicle_model }}</strong>
-              </td>
-              <td>
-                <strong>{{ b.start_date | date:'MMM d' }} – {{ b.end_date | date:'MMM d' }}</strong>
-              </td>
-              <td>
-                <span class="chip" [ngClass]="statusClass(b.status)">{{ b.status }}</span>
-              </td>
-              <td class="text-right">
-                <strong>{{ b.total_price | currency:'USD':'symbol':'1.0-0' }}</strong>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="card card-pad">
+        <span class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+          <span class="material-symbols-outlined">event_available</span>
+        </span>
+        <p class="mt-4 text-[11px] font-extrabold uppercase tracking-[.14em] text-ink-400">Réservations</p>
+        <p class="mt-1 text-xl sm:text-3xl font-extrabold text-ink-950">{{ stats.bookings.total }}</p>
+        <p class="mt-1 text-[12px] font-semibold text-ink-400">
+          {{ stats.bookings.confirmed }} confirmées · {{ stats.bookings.pending }} en attente
+        </p>
       </div>
-    </section>
 
+      <div class="card card-pad">
+        <span class="w-11 h-11 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
+          <span class="material-symbols-outlined">directions_car</span>
+        </span>
+        <p class="mt-4 text-[11px] font-extrabold uppercase tracking-[.14em] text-ink-400">Véhicules</p>
+        <p class="mt-1 text-xl sm:text-3xl font-extrabold text-ink-950">{{ stats.vehicles.total }}</p>
+        <p class="mt-1 text-[12px] font-semibold text-ink-400">
+          {{ stats.vehicles.available }} disponibles
+        </p>
+      </div>
+
+      <div class="card card-pad">
+        <span class="w-11 h-11 rounded-2xl bg-ink-100 text-ink-700 flex items-center justify-center">
+          <span class="material-symbols-outlined">group</span>
+        </span>
+        <p class="mt-4 text-[11px] font-extrabold uppercase tracking-[.14em] text-ink-400">Clients</p>
+        <p class="mt-1 text-xl sm:text-3xl font-extrabold text-ink-950">{{ stats.customers.total }}</p>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-[1fr_1.9fr] gap-4 mt-4 items-start">
+
+      <!-- Utilisation de la flotte -->
+      <div class="card card-pad">
+        <h2 class="font-extrabold">Utilisation de la flotte</h2>
+        <p class="text-[13px] text-ink-500 mt-1">Part des véhicules actuellement mobilisés.</p>
+
+        <div class="mt-6 flex items-center gap-5">
+          <div class="relative w-24 h-24 shrink-0">
+            <svg viewBox="0 0 36 36" class="w-24 h-24 -rotate-90">
+              <circle cx="18" cy="18" r="15.9" fill="none" stroke="#e8ecf4" stroke-width="3.6"></circle>
+              <circle cx="18" cy="18" r="15.9" fill="none" stroke="#2450e3" stroke-width="3.6"
+                      stroke-linecap="round"
+                      [attr.stroke-dasharray]="fleetUtilizationPct + ', 100'"></circle>
+            </svg>
+            <span class="absolute inset-0 flex items-center justify-center text-lg font-extrabold">{{ fleetUtilizationPct }}%</span>
+          </div>
+
+          <ul class="space-y-2.5 text-[13px] font-semibold flex-1">
+            <li class="flex items-center justify-between gap-3">
+              <span class="flex items-center gap-2 text-ink-500">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Disponibles
+              </span>
+              <span class="font-extrabold">{{ stats.vehicles.available }}</span>
+            </li>
+            <li class="flex items-center justify-between gap-3">
+              <span class="flex items-center gap-2 text-ink-500">
+                <span class="w-2 h-2 rounded-full bg-amber-500"></span> Maintenance
+              </span>
+              <span class="font-extrabold">{{ stats.vehicles.maintenance }}</span>
+            </li>
+            <li class="flex items-center justify-between gap-3">
+              <span class="flex items-center gap-2 text-ink-500">
+                <span class="w-2 h-2 rounded-full bg-red-500"></span> Indisponibles
+              </span>
+              <span class="font-extrabold">{{ stats.vehicles.unavailable }}</span>
+            </li>
+          </ul>
+        </div>
+
+        <a routerLink="/admin/vehicles" class="btn-outline btn-sm w-full mt-6">Gérer les véhicules</a>
+      </div>
+
+      <!-- Dernières réservations -->
+      <div class="card overflow-hidden">
+        <div class="flex items-center justify-between gap-4 p-5 sm:p-6 pb-0">
+          <h2 class="font-extrabold">Dernières réservations</h2>
+          <a routerLink="/admin/bookings" class="text-[13px] font-extrabold text-brand-600 hover:text-brand-700">Tout voir →</a>
+        </div>
+
+        <div *ngIf="recentBookings.length === 0" class="p-6">
+          <div class="empty-state !py-10">
+            <span class="material-symbols-outlined">event_upcoming</span>
+            <p class="text-sm font-semibold text-ink-500">Aucune réservation pour le moment.</p>
+          </div>
+        </div>
+
+        <div *ngIf="recentBookings.length" class="mt-4 overflow-x-auto scrollbar-thin">
+          <table class="table-modern min-w-[560px]">
+            <thead>
+              <tr>
+                <th>Client</th>
+                <th>Véhicule</th>
+                <th>Période</th>
+                <th class="!text-right">Montant</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let b of recentBookings">
+                <td class="font-bold text-ink-900">{{ b.customer_name || '—' }}</td>
+                <td>{{ b.vehicle_brand }} {{ b.vehicle_model }}</td>
+                <td class="whitespace-nowrap">{{ b.start_date | date:'dd/MM' }} → {{ b.end_date | date:'dd/MM/yy' }}</td>
+                <td class="!text-right font-extrabold text-ink-900 whitespace-nowrap">{{ b.total_price | number:'1.0-0' }} TND</td>
+                <td><span class="{{ statusClass(b.status) }}"><span class="chip-dot"></span>{{ b.status }}</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </ng-container>
-
-  <!-- Error -->
-  <p class="error-banner" *ngIf="errorMessage">{{ errorMessage }}</p>
-
 </div>

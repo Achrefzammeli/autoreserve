@@ -1,271 +1,202 @@
-<div class="customers-page">
+<div class="container-app py-8 lg:py-10">
 
-  <header class="page-header">
+  <!-- En-tête -->
+  <header class="flex flex-wrap items-end justify-between gap-4 mb-8">
     <div>
-      <span class="eyebrow">Admin / Customers</span>
-      <h1>Customers</h1>
-      <p>View all registered clients and their booking history.</p>
+      <span class="eyebrow">Administration</span>
+      <h1 class="mt-2 text-2xl sm:text-3xl font-extrabold tracking-tight">Clients</h1>
+      <p class="mt-1.5 text-ink-500">{{ customers.length }} clients — {{ totalRevenue | number:'1.0-0' }} TND de revenu cumulé.</p>
     </div>
-   
-    <div class="page-header__actions">
-
-  <button
-    class="action-pill"
-    (click)="openCreateForm()">
-
-    <span class="material-symbols-outlined">
-      add
-    </span>
-
-    New Customer
-
-  </button>
-
-  <button
-    class="action-pill action-pill--ghost"
-    (click)="loadData()">
-
-    Refresh
-
-  </button>
-
-</div>
+    <button (click)="openCreateForm()" class="btn-primary">
+      <span class="material-symbols-outlined text-[20px]">person_add</span>
+      Nouveau client
+    </button>
   </header>
 
-  <!-- Summary cards -->
-  <section class="summary-grid">
-    <article class="summary-card summary-card--accent">
-      <span class="material-symbols-outlined">group</span>
-      <div>
-        <small>Total customers</small>
-        <strong>{{ customers.length }}</strong>
-      </div>
-    </article>
-    <article class="summary-card">
-      <span class="material-symbols-outlined">payments</span>
-      <div>
-        <small>Total revenue</small>
-        <strong>{{ totalRevenue | currency:'USD':'symbol':'1.0-0' }}</strong>
-      </div>
-    </article>
-  </section>
+  <div *ngIf="errorMessage" class="alert-error mb-6">
+    <span class="material-symbols-outlined text-[20px]">error</span>
+    {{ errorMessage }}
+  </div>
 
-  <!-- Search -->
-  <div class="search-bar">
+  <!-- Recherche -->
+  <div class="input-icon-wrap max-w-md mb-6">
     <span class="material-symbols-outlined">search</span>
-    <input
-      type="text"
-      placeholder="Search by name or email..."
-      [(ngModel)]="searchQuery"
-      (ngModelChange)="onSearch()" />
+    <input type="search" class="input" placeholder="Rechercher par nom, CIN ou téléphone…"
+           [(ngModel)]="searchQuery" (ngModelChange)="onSearch()" />
   </div>
 
-  <!-- Error -->
-  <p class="error-banner" *ngIf="errorMessage">{{ errorMessage }}</p>
-
-  <!-- Loading -->
-  <div class="empty-state" *ngIf="loading">
-    <span class="material-symbols-outlined spin">autorenew</span>
-    <p>Loading customers...</p>
+  <!-- Chargement -->
+  <div *ngIf="loading" class="space-y-4">
+    <div class="skeleton h-24"></div>
+    <div class="skeleton h-24"></div>
+    <div class="skeleton h-24"></div>
   </div>
 
-  <!-- Table -->
-  <article class="panel" *ngIf="!loading">
-    <div class="table-wrap" *ngIf="filtered.length; else emptyState">
-      <table>
-        <thead>
-          <tr>
-            <th>Customer</th>
-            <th>CIN</th>
-            <th>Phone</th>
-            <th class="text-center">Bookings</th>
-            <th class="text-right">Total spent</th>
-            <th>Last booking</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let customer of filtered">
-
-            <td>
-              <div class="customer-cell">
-
-                <div class="avatar">
-                  {{ customer.full_name.charAt(0).toUpperCase() }}
-                </div>
-
-                <div>
-                  <strong>{{ customer.full_name }}</strong>
-
-                  <span class="sub">
-                    Customer #{{ customer.id }}
-                  </span>
-                </div>
-
-              </div>
-            </td>
-
-            <td>
-              {{ customer.cin }}
-            </td>
-
-            <td>
-              {{ customer.phone }}
-            </td>
-
-            <td class="text-center">
-              <span class="chip chip--neutral">
-                {{ customer.bookings_count }}
-              </span>
-            </td>
-
-            <td class="text-right">
-              <strong>
-                {{ customer.total_revenue | currency:'USD':'symbol':'1.0-0' }}
-              </strong>
-            </td>
-
-            <td>
-
-              <span *ngIf="customer.last_booking; else never">
-                {{ customer.last_booking | date:'MMM d, y' }}
-              </span>
-
-              <ng-template #never>
-                <span class="sub">—</span>
-              </ng-template>
-
-            </td>
-
-<td>
-
-  <div class="actions">
-
-    <button
-      class="action-pill action-pill--xs"
-      (click)="openDrawer(customer)">
-      History
-    </button>
-
-    <button
-      class="action-pill action-pill--xs"
-      (click)="openEditForm(customer)">
-      Edit
-    </button>
-
-    <button
-      class="action-pill action-pill--xs action-pill--danger"
-      (click)="deleteCustomer(customer.id)">
-      Delete
-    </button>
-
+  <!-- Vide -->
+  <div *ngIf="!loading && filtered.length === 0" class="empty-state">
+    <span class="material-symbols-outlined">group_off</span>
+    <h3 class="text-lg font-extrabold">Aucun client trouvé</h3>
+    <p class="text-sm text-ink-500">Ajustez votre recherche ou créez un nouveau client.</p>
   </div>
 
-</td>
-
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <ng-template #emptyState>
-      <div class="empty-state">
-        <span class="material-symbols-outlined">group_off</span>
-        <h3>No customers found</h3>
-        <p>Try adjusting your search.</p>
+  <!-- Liste -->
+  <div *ngIf="!loading && filtered.length" class="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
+    <article *ngFor="let c of filtered" (click)="openDrawer(c)"
+             class="card card-hover card-pad cursor-pointer">
+      <div class="flex items-start justify-between gap-3">
+        <div class="flex items-center gap-3 min-w-0">
+          <span class="w-11 h-11 rounded-full bg-ink-950 text-white font-extrabold flex items-center justify-center shrink-0">
+            {{ c.full_name.charAt(0) | uppercase }}
+          </span>
+          <div class="min-w-0">
+            <h2 class="font-extrabold truncate">{{ c.full_name }}</h2>
+            <p class="text-[13px] text-ink-400 font-semibold">CIN {{ c.cin }}</p>
+          </div>
+        </div>
+        <span class="chip-info shrink-0">{{ c.bookings_count }} résa{{ c.bookings_count > 1 ? 's' : '' }}</span>
       </div>
-    </ng-template>
-  </article>
 
+      <div class="mt-4 pt-4 border-t border-ink-100 flex items-center justify-between text-sm">
+        <span class="inline-flex items-center gap-1.5 text-ink-500 font-semibold">
+          <span class="material-symbols-outlined text-[17px]">call</span>
+          {{ c.phone }}
+        </span>
+        <span class="font-extrabold">{{ c.total_revenue | number:'1.0-0' }} TND</span>
+      </div>
+    </article>
+  </div>
 </div>
 
-<!-- Booking history drawer -->
-<div class="overlay" [class.is-open]="drawerOpen" (click)="closeDrawer()"></div>
+<!-- ============ Volet détail client ============ -->
+<div *ngIf="drawerOpen && selectedCustomer" class="fixed inset-0 z-50">
+  <div class="absolute inset-0 bg-ink-950/60 backdrop-blur-sm animate-fade-in" (click)="closeDrawer()"></div>
 
-<aside class="drawer" [class.is-open]="drawerOpen">
-  <div class="drawer__header">
-    <div *ngIf="selectedCustomer">
-      <div class="avatar avatar--lg">{{ selectedCustomer.full_name.charAt(0).toUpperCase() }}</div>
-      <h2>{{ selectedCustomer.full_name }}</h2>
-      <span class="sub">
-  CIN : {{ selectedCustomer.cin }}
-</span><span class="sub">
-  Phone : {{ selectedCustomer.phone }}
-</span>
-    </div>
-    <button type="button" class="close-btn" (click)="closeDrawer()">
-      <span class="material-symbols-outlined">close</span>
-    </button>
-  </div>
-
-  <div class="drawer__body">
-    <h3>Booking history</h3>
-
-    <div *ngIf="customerBookings.length; else noBookings">
-      <div class="booking-item" *ngFor="let b of customerBookings">
-        <div class="booking-item__top">
-          <strong>{{ b.vehicle_brand }} {{ b.vehicle_model }}</strong>
-          <span class="chip" [ngClass]="statusClass(b.status)">{{ b.status }}</span>
-        </div>
-        <div class="booking-item__meta">
-          <span>{{ b.start_date | date:'MMM d' }} – {{ b.end_date | date:'MMM d, y' }}</span>
-          <strong>{{ b.total_price | currency:'USD':'symbol':'1.0-0' }}</strong>
-        </div>
-      </div>
+  <aside class="absolute right-0 inset-y-0 w-full sm:w-[430px] bg-white shadow-card-lg overflow-y-auto scrollbar-thin animate-slide-in-right">
+    <div class="sticky top-0 bg-white/95 backdrop-blur border-b border-ink-100 px-6 py-4 flex items-center justify-between">
+      <h2 class="text-lg font-extrabold">Fiche client</h2>
+      <button (click)="closeDrawer()" class="btn-icon" aria-label="Fermer">
+        <span class="material-symbols-outlined">close</span>
+      </button>
     </div>
 
-    <ng-template #noBookings>
-      <div class="empty-state">
-        <span class="material-symbols-outlined">calendar_month</span>
-        <p>No bookings yet.</p>
+    <div class="p-6">
+      <!-- Identité -->
+      <div class="flex items-center gap-4">
+        <span class="w-14 h-14 rounded-full bg-ink-950 text-white text-xl font-extrabold flex items-center justify-center">
+          {{ selectedCustomer.full_name.charAt(0) | uppercase }}
+        </span>
+        <div>
+          <h3 class="text-xl font-extrabold">{{ selectedCustomer.full_name }}</h3>
+          <p class="text-[13px] text-ink-400 font-semibold">CIN {{ selectedCustomer.cin }}</p>
+        </div>
       </div>
-    </ng-template>
-  </div>
-</aside>
-<div
-  class="overlay"
-  *ngIf="showForm"
-  (click)="closeForm()">
+
+      <!-- Coordonnées -->
+      <div class="mt-6 space-y-3 text-sm">
+        <p class="flex items-center gap-3 font-semibold text-ink-600">
+          <span class="material-symbols-outlined text-ink-400 text-[20px]">call</span>
+          {{ selectedCustomer.phone }}
+        </p>
+        <p *ngIf="selectedCustomer.email" class="flex items-center gap-3 font-semibold text-ink-600">
+          <span class="material-symbols-outlined text-ink-400 text-[20px]">mail</span>
+          {{ selectedCustomer.email }}
+        </p>
+        <p *ngIf="selectedCustomer.address" class="flex items-center gap-3 font-semibold text-ink-600">
+          <span class="material-symbols-outlined text-ink-400 text-[20px]">location_on</span>
+          {{ selectedCustomer.address }}
+        </p>
+      </div>
+
+      <!-- Stats -->
+      <div class="mt-6 grid grid-cols-2 gap-3">
+        <div class="rounded-2xl bg-ink-50 border border-ink-100 p-4">
+          <p class="text-[11px] font-extrabold uppercase tracking-[.12em] text-ink-400">Réservations</p>
+          <p class="mt-1 text-xl font-extrabold">{{ selectedCustomer.bookings_count }}</p>
+        </div>
+        <div class="rounded-2xl bg-ink-50 border border-ink-100 p-4">
+          <p class="text-[11px] font-extrabold uppercase tracking-[.12em] text-ink-400">Revenu</p>
+          <p class="mt-1 text-xl font-extrabold">{{ selectedCustomer.total_revenue | number:'1.0-0' }} <span class="text-[12px] text-ink-400">TND</span></p>
+        </div>
+      </div>
+
+      <!-- Historique -->
+      <h4 class="mt-8 mb-3 text-sm font-extrabold uppercase tracking-[.12em] text-ink-500">Historique des réservations</h4>
+
+      <div *ngIf="customerBookings.length === 0" class="empty-state !py-8">
+        <span class="material-symbols-outlined !text-[30px]">event_upcoming</span>
+        <p class="text-sm font-semibold text-ink-500">Aucune réservation.</p>
+      </div>
+
+      <div class="space-y-3">
+        <div *ngFor="let b of customerBookings" class="rounded-2xl border border-ink-100 p-4">
+          <div class="flex items-center justify-between gap-3">
+            <p class="font-extrabold text-sm">{{ b.vehicle_brand }} {{ b.vehicle_model }}</p>
+            <span class="{{ statusClass(b.status) }}">{{ b.status }}</span>
+          </div>
+          <p class="mt-1.5 text-[13px] text-ink-500 font-semibold">
+            {{ b.start_date | date:'dd/MM/yyyy' }} → {{ b.end_date | date:'dd/MM/yyyy' }}
+            · <span class="text-ink-900 font-extrabold">{{ b.total_price | number:'1.0-0' }} TND</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="mt-8 flex gap-3 pb-safe">
+        <button (click)="openEditForm(selectedCustomer); closeDrawer()" class="btn-outline flex-1">
+          <span class="material-symbols-outlined text-[18px]">edit</span>
+          Modifier
+        </button>
+        <button (click)="deleteCustomer(selectedCustomer.id); closeDrawer()" class="btn-danger">
+          <span class="material-symbols-outlined text-[18px]">delete</span>
+          Supprimer
+        </button>
+      </div>
+    </div>
+  </aside>
 </div>
 
-<div
-  class="modal"
-  *ngIf="showForm">
+<!-- ============ Modale : créer / modifier un client ============ -->
+<div *ngIf="showForm" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+  <div class="absolute inset-0 bg-ink-950/60 backdrop-blur-sm animate-fade-in" (click)="closeForm()"></div>
 
-  <h2>
-    {{ editingCustomer ? 'Edit Customer' : 'New Customer' }}
-  </h2>
+  <div class="relative w-full sm:max-w-lg bg-white rounded-t-3xl sm:rounded-3xl shadow-card-lg max-h-[92vh] overflow-y-auto scrollbar-thin animate-fade-up">
+    <div class="sticky top-0 bg-white/95 backdrop-blur border-b border-ink-100 px-6 py-4 flex items-center justify-between rounded-t-3xl">
+      <h2 class="text-lg font-extrabold">{{ editingCustomer ? 'Modifier le client' : 'Nouveau client' }}</h2>
+      <button (click)="closeForm()" class="btn-icon" aria-label="Fermer">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
 
-  <input
-    [(ngModel)]="customerForm.full_name"
-    placeholder="Full Name">
+    <div class="p-6 space-y-4">
+      <label class="block">
+        <span class="label">Nom complet</span>
+        <input type="text" class="input" [(ngModel)]="customerForm.full_name" placeholder="Prénom Nom" />
+      </label>
+      <div class="grid grid-cols-2 gap-4">
+        <label class="block">
+          <span class="label">CIN</span>
+          <input type="text" class="input" [(ngModel)]="customerForm.cin" placeholder="00000000" />
+        </label>
+        <label class="block">
+          <span class="label">Téléphone</span>
+          <input type="tel" class="input" [(ngModel)]="customerForm.phone" placeholder="+216…" />
+        </label>
+      </div>
+      <label class="block">
+        <span class="label">E-mail <span class="normal-case font-semibold text-ink-400">(optionnel)</span></span>
+        <input type="email" class="input" [(ngModel)]="customerForm.email" placeholder="client@exemple.com" />
+      </label>
+      <label class="block">
+        <span class="label">Adresse <span class="normal-case font-semibold text-ink-400">(optionnel)</span></span>
+        <input type="text" class="input" [(ngModel)]="customerForm.address" placeholder="Ville, rue…" />
+      </label>
 
-  <input
-    [(ngModel)]="customerForm.cin"
-    placeholder="CIN">
-
-  <input
-    [(ngModel)]="customerForm.phone"
-    placeholder="Phone">
-
-  <input
-    [(ngModel)]="customerForm.email"
-    placeholder="Email">
-
-  <input
-    [(ngModel)]="customerForm.address"
-    placeholder="Address">
-
-  <div class="modal-actions">
-
-    <button (click)="closeForm()">
-      Cancel
-    </button>
-
-    <button (click)="saveCustomer()">
-      Save
-    </button>
-
+      <div class="flex gap-3 pt-2 pb-safe">
+        <button (click)="saveCustomer()" class="btn-primary flex-1">
+          {{ editingCustomer ? 'Enregistrer' : 'Créer le client' }}
+        </button>
+        <button (click)="closeForm()" class="btn-ghost">Annuler</button>
+      </div>
+    </div>
   </div>
-
 </div>

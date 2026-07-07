@@ -1,167 +1,163 @@
-<div *ngIf="loading" class="min-h-screen flex items-center justify-center">
-  <p class="text-lg font-semibold">Loading vehicle...</p>
-</div>
+<div class="bg-ink-50 min-h-screen">
 
-<div *ngIf="!loading && vehicle" class="min-h-screen bg-gray-50">
+  <app-loading *ngIf="loading" message="Chargement du véhicule…"></app-loading>
 
-  <div class="max-w-7xl mx-auto px-4 py-8">
-
-    <div class="page-nav">
-
-      <a routerLink="/fleet" class="back-link">
-
-        <span class="back-icon">
-          ←
-        </span>
-
-        <div>
-          <small>Return</small>
-          <strong>Fleet Vehicles</strong>
-        </div>
-
-      </a>
-
+  <!-- Véhicule introuvable -->
+  <div *ngIf="!loading && !vehicle" class="container-app py-16">
+    <div class="empty-state">
+      <span class="material-symbols-outlined">search_off</span>
+      <h3 class="text-lg font-extrabold">Véhicule introuvable</h3>
+      <p class="text-sm text-ink-500">Ce véhicule n'existe plus ou a été retiré de la flotte.</p>
+      <a routerLink="/fleet" class="btn-primary btn-sm mt-2">Retour à la flotte</a>
     </div>
-    <div class="grid lg:grid-cols-2 gap-10 mobile-stack">
-
-      <!-- IMAGE -->
-
-      <div class="bg-white rounded-3xl overflow-hidden shadow-lg">
-
-      <img
-        [src]="vehicle.image_url ? 'http://localhost:8000' + vehicle.image_url : 'https://via.placeholder.com/1000x700'"
-        class="vehicle-image"
-        [alt]="vehicle.brand + ' ' + vehicle.model"
-      />
-
-      </div>
-
-      <!-- DETAILS -->
-
-      <div>
-
-        <div class="flex justify-between items-start mb-6">
-
-          <div>
-
-            <h1 class="text-5xl font-black text-gray-900">
-              {{ vehicle.brand }}
-            </h1>
-
-            <h2 class="text-3xl font-bold text-blue-600">
-              {{ vehicle.model }}
-            </h2>
-
-          </div>
-
-          <span
-            class="px-4 py-2 rounded-xl text-sm font-bold"
-            [ngClass]="{
-              'bg-green-100 text-green-700': vehicle.status === 'AVAILABLE',
-              'bg-yellow-100 text-yellow-700': vehicle.status === 'MAINTENANCE',
-              'bg-red-100 text-red-700': vehicle.status === 'UNAVAILABLE'
-            }"
-          >
-            {{ vehicle.status }}
-          </span>
-
-        </div>
-
-        <!-- PRICE -->
-
-        <div class="bg-white rounded-3xl p-6 shadow-md mb-6">
-
-          <p class="text-gray-500 mb-2">
-            Rental Price
-          </p>
-
-          <h3 class="text-4xl font-black text-blue-600">
-            {{ vehicle.price_per_day }} TND
-          </h3>
-
-          <p class="text-gray-400">
-            per day
-          </p>
-
-        </div>
-
-        <!-- SPECS -->
-
-        <div class="bg-white rounded-3xl p-6 shadow-md mb-6">
-
-          <h3 class="text-xl font-bold mb-4">
-            Vehicle Information
-          </h3>
-
-         <p class="text-gray-600 leading-relaxed">
-            {{
-              vehicle.specs ||
-              'No specifications provided for this vehicle.'
-            }}
-          </p>
-
-        </div>
-
-        <!-- BOOKING -->
-
-             <div class="booking-card bg-gray-900 rounded-3xl p-6 text-white shadow-xl">
-
-        <h3 class="text-xl font-bold mb-3">
-          Reserve this vehicle
-        </h3>
-
-        <form [formGroup]="bookingForm">
-
-          <div class="space-y-4">
-
-          <div class="field">
-            <label>Start Date</label>
-            <input
-              type="date"
-              formControlName="start_date"
-              class="booking-input"
-            />
-          </div>
-
-          <div class="field">
-            <label>End Date</label>
-            <input
-              type="date"
-              formControlName="end_date"
-              class="booking-input"
-            />
-          </div>
-
-          </div>
-
-          <div class="price-box mt-6 p-4 rounded-xl bg-white/10">
-
-            <p class="text-sm text-gray-300">
-              Estimated Price
-            </p>
-
-            <h2 class="estimated-price">
-              {{ totalPrice }} TND
-            </h2>
-
-          </div>
-
-        <button
-          type="button"
-          (click)="bookVehicle()"
-          [disabled]="bookingLoading || vehicle.status !== 'AVAILABLE'"
-          class="book-btn w-full mt-6 py-4 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white font-bold shadow-lg"
-        >
-          {{ bookingLoading ? 'Booking...' : 'Book Vehicle' }}
-        </button>
-        </form>
-
-      </div>
-
-      </div>
-
-    </div>
-
   </div>
 
+  <div *ngIf="!loading && vehicle" class="container-app py-6 sm:py-10">
+
+    <!-- Fil d'Ariane -->
+    <nav class="flex items-center gap-1.5 text-[13px] font-semibold text-ink-400 mb-6">
+      <a routerLink="/" class="hover:text-ink-900 transition-colors">Accueil</a>
+      <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+      <a routerLink="/fleet" class="hover:text-ink-900 transition-colors">Flotte</a>
+      <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+      <span class="text-ink-900">{{ vehicle.brand }} {{ vehicle.model }}</span>
+    </nav>
+
+    <div class="grid lg:grid-cols-[1.5fr_1fr] gap-8 items-start">
+
+      <!-- Colonne véhicule -->
+      <div class="space-y-6">
+        <!-- Image -->
+        <div class="relative card overflow-hidden">
+          <div class="h-64 sm:h-96 bg-gradient-to-br from-ink-100 to-ink-200">
+            <img *ngIf="imageUrl()" [src]="imageUrl()" [alt]="vehicle.brand + ' ' + vehicle.model"
+                 class="w-full h-full object-cover" />
+            <span *ngIf="!imageUrl()"
+                  class="material-symbols-outlined absolute inset-0 flex items-center justify-center text-[100px] text-ink-300">
+              directions_car
+            </span>
+          </div>
+          <span class="absolute top-5 left-5 {{ statusChip(vehicle.status) }} backdrop-blur shadow-card">
+            <span class="chip-dot"></span>
+            {{ statusLabel(vehicle.status) }}
+          </span>
+        </div>
+
+        <!-- Titre + specs -->
+        <div class="card card-pad">
+          <p class="text-[11px] font-extrabold uppercase tracking-[.16em] text-ink-400">{{ vehicle.brand }}</p>
+          <div class="mt-1 flex flex-wrap items-end justify-between gap-3">
+            <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight">{{ vehicle.model }}</h1>
+            <p class="text-2xl font-extrabold text-brand-600">
+              {{ vehicle.price_per_day }} TND
+              <span class="text-sm font-bold text-ink-400">/ jour</span>
+            </p>
+          </div>
+
+          <div *ngIf="vehicle.specs" class="mt-5 pt-5 border-t border-ink-100">
+            <h2 class="text-sm font-extrabold uppercase tracking-[.12em] text-ink-500">Caractéristiques</h2>
+            <p class="mt-3 text-[15px] leading-relaxed text-ink-600 whitespace-pre-line">{{ vehicle.specs }}</p>
+          </div>
+
+          <!-- Garanties -->
+          <div class="mt-5 pt-5 border-t border-ink-100 grid sm:grid-cols-3 gap-4">
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-brand-600">verified_user</span>
+              <p class="text-[13px] font-bold text-ink-600">Assurance incluse</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-brand-600">published_with_changes</span>
+              <p class="text-[13px] font-bold text-ink-600">Annulation gratuite 24h</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-brand-600">support_agent</span>
+              <p class="text-[13px] font-bold text-ink-600">Assistance 24/7</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dates déjà réservées -->
+        <div *ngIf="bookedDates.length" class="card card-pad">
+          <h2 class="text-sm font-extrabold uppercase tracking-[.12em] text-ink-500 flex items-center gap-2">
+            <span class="material-symbols-outlined text-amber-500 text-[20px]">event_busy</span>
+            Périodes déjà réservées
+          </h2>
+          <ul class="mt-4 space-y-2">
+            <li *ngFor="let range of bookedDates"
+                class="flex items-center gap-3 rounded-xl bg-amber-50 border border-amber-100 px-4 py-2.5 text-sm font-semibold text-amber-800">
+              <span class="material-symbols-outlined text-[18px]">block</span>
+              Du {{ range.start_date | date:'dd/MM/yyyy' }} au {{ range.end_date | date:'dd/MM/yyyy' }}
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Carte de réservation -->
+      <aside class="lg:sticky lg:top-24">
+        <form [formGroup]="bookingForm" (ngSubmit)="bookVehicle()" class="card card-pad space-y-5">
+          <div class="flex items-center gap-3">
+            <span class="w-11 h-11 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center">
+              <span class="material-symbols-outlined">calendar_month</span>
+            </span>
+            <div>
+              <h2 class="text-lg font-extrabold">Réserver ce véhicule</h2>
+              <p class="text-[13px] font-medium text-ink-400">Confirmation immédiate</p>
+            </div>
+          </div>
+
+          <label class="block">
+            <span class="label">Date de départ</span>
+            <div class="input-icon-wrap">
+              <span class="material-symbols-outlined">calendar_today</span>
+              <input type="date" formControlName="start_date" class="input" />
+            </div>
+            <p *ngIf="bookingForm.get('start_date')?.invalid && bookingForm.get('start_date')?.touched" class="field-error">
+              <span class="material-symbols-outlined text-[16px]">error</span> Date de départ requise
+            </p>
+          </label>
+
+          <label class="block">
+            <span class="label">Date de retour</span>
+            <div class="input-icon-wrap">
+              <span class="material-symbols-outlined">event</span>
+              <input type="date" formControlName="end_date" class="input" />
+            </div>
+            <p *ngIf="bookingForm.get('end_date')?.invalid && bookingForm.get('end_date')?.touched" class="field-error">
+              <span class="material-symbols-outlined text-[16px]">error</span> Date de retour requise
+            </p>
+          </label>
+
+          <!-- Récapitulatif prix -->
+          <div *ngIf="totalPrice > 0" class="rounded-2xl bg-ink-50 border border-ink-100 p-4 space-y-2.5 animate-fade-in">
+            <div class="flex items-center justify-between text-sm font-semibold text-ink-500">
+              <span>{{ vehicle.price_per_day }} TND × {{ days }} jour{{ days > 1 ? 's' : '' }}</span>
+              <span>{{ totalPrice }} TND</span>
+            </div>
+            <div class="flex items-center justify-between pt-2.5 border-t border-ink-200">
+              <span class="font-extrabold">Total</span>
+              <span class="text-xl font-extrabold text-brand-600">{{ totalPrice }} TND</span>
+            </div>
+          </div>
+
+          <div *ngIf="bookingError" class="alert-error">
+            <span class="material-symbols-outlined text-[20px]">error</span>
+            {{ bookingError }}
+          </div>
+
+          <button type="submit" class="btn-primary btn-lg w-full"
+                  [disabled]="bookingLoading || vehicle.status !== 'AVAILABLE'">
+            <span *ngIf="bookingLoading" class="w-5 h-5 rounded-full border-2 border-white/40 border-t-white animate-spin"></span>
+            {{ vehicle.status !== 'AVAILABLE'
+              ? 'Véhicule indisponible'
+              : (bookingLoading ? 'Réservation…' : (isLoggedIn ? 'Réserver maintenant' : 'Se connecter pour réserver')) }}
+          </button>
+
+          <p class="flex items-center justify-center gap-1.5 text-[12px] font-semibold text-ink-400">
+            <span class="material-symbols-outlined text-[15px]">lock</span>
+            Aucun débit avant la confirmation
+          </p>
+        </form>
+      </aside>
+    </div>
+  </div>
 </div>

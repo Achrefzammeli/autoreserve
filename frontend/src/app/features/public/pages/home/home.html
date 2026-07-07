@@ -1,123 +1,277 @@
-<div class="home-page">
-	<section class="hero">
-		<div class="hero__bg">
-			<img
-				alt="Luxury sports car in a dramatic twilight setting"
-				src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfAaXYQ-dwYd4W6plSXzcH7UmGZ-nhtNHtv3ftdGnGSgjAcGQ-TF8qo1rJ1ayJ9Odsj4iPwnwYPIGMobHuQyQOuT4Vjni3AlgEc3ns04nXYYgljXYl8tlVxNzS3zCa_EufJyZtBEpKE0iyS5JJm01Kmp-MShnRSR98umRdKgERbFrMNDPaqd4ZwmS476FdYMfiN_yC9Q1uquCS8b9i7DeuFZ05SDuD0nedcyLVkyvbnpYi5RzloZX4d2-BtUdUoV8xNIVs46Z7uwU"
-			/>
-			<div class="hero__overlay"></div>
-		</div>
+<div class="bg-ink-50">
 
-		<div class="hero__content">
-			<div class="hero__intro">
-				<span>Next-Gen Mobility</span>
-				<h1>Intelligent fleet management for the modern road.</h1>
-				<p>
-					Seamlessly bridge the gap between asset management and customer experience with
-					AutoReserve's unified rental platform.
-				</p>
-			</div>
+  <!-- ================= HERO ================= -->
+  <section class="relative overflow-hidden bg-ink-950 text-white">
+    <!-- Décor -->
+    <div class="absolute inset-0"
+         style="background:
+           radial-gradient(70rem 34rem at 85% -10%, rgba(36,80,227,.4), transparent 60%),
+           radial-gradient(50rem 30rem at -10% 110%, rgba(61,110,240,.25), transparent 60%);">
+    </div>
+    <div class="absolute inset-0 opacity-[.04]"
+         style="background-image: linear-gradient(rgba(255,255,255,.9) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.9) 1px, transparent 1px); background-size: 48px 48px;">
+    </div>
 
-<form
-  class="search-card glass-card"
-  [formGroup]="searchForm"
-  (ngSubmit)="searchVehicles()"
->
+    <div class="container-app relative z-10 grid lg:grid-cols-[1.1fr_.9fr] gap-12 lg:gap-16 items-center py-16 sm:py-24 lg:py-32">
 
-  <div class="search-grid">
-
-    <label class="search-field">
-
-      <span>Pickup date & time</span>
-
-      <div class="search-field__control">
-        <span class="material-symbols-outlined">
-          calendar_today
+      <!-- Texte -->
+      <div class="animate-fade-up">
+        <span class="eyebrow !text-brand-300">
+          <span class="w-6 h-px bg-brand-400"></span>
+          Location de voitures premium
         </span>
+        <h1 class="mt-5 text-4xl sm:text-5xl xl:text-6xl font-extrabold leading-[1.06] tracking-tight text-white text-balance">
+          Conduisez la voiture<br class="hidden sm:block" />
+          de vos <span class="text-brand-400">envies</span>.
+        </h1>
+        <p class="mt-6 max-w-xl text-base sm:text-lg leading-relaxed text-ink-300">
+          Réservez en moins de deux minutes. Des véhicules récents, des prix
+          transparents, zéro paperasse — récupérez vos clés et roulez.
+        </p>
 
-        <input
-          type="datetime-local"
-          formControlName="start_date"
-        />
+        <div class="mt-8 flex flex-col sm:flex-row gap-3">
+          <a routerLink="/fleet" class="btn-primary btn-lg">
+            Explorer la flotte
+            <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+          </a>
+          <a routerLink="/about" class="btn-lg btn border border-white/15 text-white hover:bg-white/10">
+            Comment ça marche
+          </a>
+        </div>
+
+        <!-- Preuves -->
+        <dl class="mt-12 grid grid-cols-3 gap-6 max-w-md">
+          <div>
+            <dt class="text-2xl sm:text-3xl font-extrabold text-white">50+</dt>
+            <dd class="mt-1 text-[13px] font-semibold text-ink-400">Véhicules</dd>
+          </div>
+          <div>
+            <dt class="text-2xl sm:text-3xl font-extrabold text-white">4.9<span class="text-accent-400">★</span></dt>
+            <dd class="mt-1 text-[13px] font-semibold text-ink-400">Note clients</dd>
+          </div>
+          <div>
+            <dt class="text-2xl sm:text-3xl font-extrabold text-white">24/7</dt>
+            <dd class="mt-1 text-[13px] font-semibold text-ink-400">Assistance</dd>
+          </div>
+        </dl>
       </div>
 
-    </label>
+      <!-- Carte de recherche -->
+      <div class="animate-fade-up" style="animation-delay:.12s">
+        <form [formGroup]="searchForm" (ngSubmit)="searchVehicles()"
+              class="rounded-3xl bg-white/[.06] border border-white/10 backdrop-blur-xl p-6 sm:p-8 shadow-card-lg">
+          <div class="flex items-center gap-3">
+            <span class="w-11 h-11 rounded-2xl bg-brand-600 flex items-center justify-center">
+              <span class="material-symbols-outlined text-white text-[22px]">search</span>
+            </span>
+            <div>
+              <h2 class="text-lg font-extrabold text-white">Trouver un véhicule</h2>
+              <p class="text-[13px] text-ink-400 font-medium">Disponibilité en temps réel</p>
+            </div>
+          </div>
 
-    <label class="search-field">
+          <div class="mt-6 grid gap-4">
+            <label class="block">
+              <span class="label !text-ink-300">Date de départ</span>
+              <div class="input-icon-wrap">
+                <span class="material-symbols-outlined">calendar_today</span>
+                <input type="date" formControlName="start_date"
+                       class="input !bg-white/[.07] !border-white/10 !text-white [color-scheme:dark]" />
+              </div>
+            </label>
 
-      <span>Return date & time</span>
+            <label class="block">
+              <span class="label !text-ink-300">Date de retour</span>
+              <div class="input-icon-wrap">
+                <span class="material-symbols-outlined">event</span>
+                <input type="date" formControlName="end_date"
+                       class="input !bg-white/[.07] !border-white/10 !text-white [color-scheme:dark]" />
+              </div>
+            </label>
 
-      <div class="search-field__control">
-        <span class="material-symbols-outlined">
-          event_repeat
-        </span>
+            <button type="submit" class="btn-primary btn-lg w-full mt-1">
+              Voir les véhicules disponibles
+            </button>
+          </div>
 
-        <input
-          type="datetime-local"
-          formControlName="end_date"
-        />
+          <p class="mt-4 flex items-center justify-center gap-1.5 text-[12px] font-semibold text-ink-400">
+            <span class="material-symbols-outlined text-[15px]">lock</span>
+            Annulation gratuite jusqu'à 24h avant le départ
+          </p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CATÉGORIES ================= -->
+  <section class="container-app py-16 sm:py-24">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+      <div>
+        <span class="eyebrow">Nos catégories</span>
+        <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold tracking-tight">Une voiture pour chaque trajet</h2>
+      </div>
+      <a routerLink="/fleet" class="btn-outline w-fit">
+        Toute la flotte
+        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+      </a>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <a routerLink="/fleet" class="group card card-hover overflow-hidden">
+        <div class="relative h-52 bg-gradient-to-br from-ink-800 to-ink-600 overflow-hidden">
+          <span class="material-symbols-outlined absolute inset-0 flex items-center justify-center text-[88px] text-white/20 group-hover:scale-110 transition-transform duration-500">airport_shuttle</span>
+          <span class="absolute top-4 left-4 chip bg-white/90 text-ink-800 backdrop-blur">Familial</span>
+        </div>
+        <div class="card-pad flex items-center justify-between">
+          <div>
+            <h3 class="text-lg font-extrabold">SUV & Crossovers</h3>
+            <p class="mt-1 text-sm text-ink-500">Espace et confort pour tous vos voyages.</p>
+          </div>
+          <span class="material-symbols-outlined text-ink-300 group-hover:text-brand-600 group-hover:translate-x-1 transition-all">arrow_forward</span>
+        </div>
+      </a>
+
+      <a routerLink="/fleet" class="group card card-hover overflow-hidden">
+        <div class="relative h-52 bg-gradient-to-br from-brand-800 to-brand-500 overflow-hidden">
+          <span class="material-symbols-outlined absolute inset-0 flex items-center justify-center text-[88px] text-white/25 group-hover:scale-110 transition-transform duration-500">directions_car</span>
+          <span class="absolute top-4 left-4 chip bg-white/90 text-ink-800 backdrop-blur">Business</span>
+        </div>
+        <div class="card-pad flex items-center justify-between">
+          <div>
+            <h3 class="text-lg font-extrabold">Berlines élégantes</h3>
+            <p class="mt-1 text-sm text-ink-500">Le raffinement pour vos rendez-vous.</p>
+          </div>
+          <span class="material-symbols-outlined text-ink-300 group-hover:text-brand-600 group-hover:translate-x-1 transition-all">arrow_forward</span>
+        </div>
+      </a>
+
+      <a routerLink="/fleet" class="group card card-hover overflow-hidden sm:col-span-2 lg:col-span-1">
+        <div class="relative h-52 bg-gradient-to-br from-emerald-800 to-emerald-500 overflow-hidden">
+          <span class="material-symbols-outlined absolute inset-0 flex items-center justify-center text-[88px] text-white/25 group-hover:scale-110 transition-transform duration-500">electric_car</span>
+          <span class="absolute top-4 left-4 chip bg-white/90 text-ink-800 backdrop-blur">Éco</span>
+        </div>
+        <div class="card-pad flex items-center justify-between">
+          <div>
+            <h3 class="text-lg font-extrabold">Électriques & hybrides</h3>
+            <p class="mt-1 text-sm text-ink-500">Roulez propre, sans compromis.</p>
+          </div>
+          <span class="material-symbols-outlined text-ink-300 group-hover:text-brand-600 group-hover:translate-x-1 transition-all">arrow_forward</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ================= COMMENT ÇA MARCHE ================= -->
+  <section class="bg-white border-y border-ink-100">
+    <div class="container-app py-16 sm:py-24">
+      <div class="max-w-2xl mb-12">
+        <span class="eyebrow">Simple & rapide</span>
+        <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold tracking-tight">Réservez en 3 étapes</h2>
+        <p class="mt-4 text-ink-500 leading-relaxed">
+          Un parcours pensé pour vous faire gagner du temps, de la recherche à la remise des clés.
+        </p>
       </div>
 
-    </label>
+      <div class="grid sm:grid-cols-3 gap-5">
+        <div class="relative card card-pad">
+          <span class="absolute -top-4 left-6 w-9 h-9 rounded-xl bg-brand-600 text-white font-extrabold flex items-center justify-center shadow-glow">1</span>
+          <span class="material-symbols-outlined text-brand-600 text-[32px] mt-3">calendar_month</span>
+          <h3 class="mt-4 text-lg font-extrabold">Choisissez vos dates</h3>
+          <p class="mt-2 text-sm text-ink-500 leading-relaxed">
+            Indiquez vos dates de départ et de retour, on vous montre uniquement les véhicules disponibles.
+          </p>
+        </div>
+        <div class="relative card card-pad">
+          <span class="absolute -top-4 left-6 w-9 h-9 rounded-xl bg-brand-600 text-white font-extrabold flex items-center justify-center shadow-glow">2</span>
+          <span class="material-symbols-outlined text-brand-600 text-[32px] mt-3">directions_car</span>
+          <h3 class="mt-4 text-lg font-extrabold">Sélectionnez votre voiture</h3>
+          <p class="mt-2 text-sm text-ink-500 leading-relaxed">
+            Comparez les modèles, les équipements et les tarifs en toute transparence.
+          </p>
+        </div>
+        <div class="relative card card-pad">
+          <span class="absolute -top-4 left-6 w-9 h-9 rounded-xl bg-brand-600 text-white font-extrabold flex items-center justify-center shadow-glow">3</span>
+          <span class="material-symbols-outlined text-brand-600 text-[32px] mt-3">key</span>
+          <h3 class="mt-4 text-lg font-extrabold">Prenez la route</h3>
+          <p class="mt-2 text-sm text-ink-500 leading-relaxed">
+            Confirmation immédiate. Récupérez vos clés et profitez du trajet.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  </div>
+  <!-- ================= AVANTAGES ================= -->
+  <section class="container-app py-16 sm:py-24">
+    <div class="grid lg:grid-cols-[1fr_1.6fr] gap-10 items-start">
+      <div class="lg:sticky lg:top-24">
+        <span class="eyebrow">Pourquoi AutoReserve</span>
+        <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold tracking-tight text-balance">
+          Une expérience de location sans friction
+        </h2>
+        <p class="mt-4 text-ink-500 leading-relaxed">
+          Nous avons repensé chaque étape de la location pour qu'elle soit aussi
+          agréable que le trajet lui-même.
+        </p>
+        <a routerLink="/auth/register" class="btn-dark mt-7">
+          Créer mon compte
+          <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+        </a>
+      </div>
 
-  <button
-    type="submit"
-    class="primary-action"
-  >
-    Search Available Vehicles
-  </button>
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div class="card card-pad card-hover">
+          <span class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center">
+            <span class="material-symbols-outlined">verified_user</span>
+          </span>
+          <h3 class="mt-4 font-extrabold">Assurance incluse</h3>
+          <p class="mt-2 text-sm text-ink-500 leading-relaxed">Tous nos véhicules sont couverts, roulez l'esprit tranquille.</p>
+        </div>
+        <div class="card card-pad card-hover">
+          <span class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center">
+            <span class="material-symbols-outlined">payments</span>
+          </span>
+          <h3 class="mt-4 font-extrabold">Prix transparents</h3>
+          <p class="mt-2 text-sm text-ink-500 leading-relaxed">Le prix affiché est le prix payé. Aucun frais caché.</p>
+        </div>
+        <div class="card card-pad card-hover">
+          <span class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center">
+            <span class="material-symbols-outlined">bolt</span>
+          </span>
+          <h3 class="mt-4 font-extrabold">Confirmation immédiate</h3>
+          <p class="mt-2 text-sm text-ink-500 leading-relaxed">Votre réservation est validée en temps réel, sans attente.</p>
+        </div>
+        <div class="card card-pad card-hover">
+          <span class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center">
+            <span class="material-symbols-outlined">support_agent</span>
+          </span>
+          <h3 class="mt-4 font-extrabold">Assistance 24/7</h3>
+          <p class="mt-2 text-sm text-ink-500 leading-relaxed">Une équipe disponible à tout moment, où que vous soyez.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-</form>
-		</div>
-	</section>
-
-	<section class="section section--benefits">
-		<div class="benefits-layout">
-			<div class="benefits-intro">
-				<h2>Why Choose AutoReserve</h2>
-				<p>
-					We redefine mobility with precision technology and a focus on executive-level service
-					reliability.
-				</p>
-			</div>
-
-			<div class="benefits-grid">
-				<article class="benefit-card">
-					<div class="benefit-card__icon"><span class="material-symbols-outlined">speed</span></div>
-					<h3>Easy Booking</h3>
-					<p>
-						Our frictionless interface allows you to reserve a vehicle in under 60 seconds from
-						any device.
-					</p>
-				</article>
-
-				<article class="benefit-card">
-					<div class="benefit-card__icon"><span class="material-symbols-outlined">support_agent</span></div>
-					<h3>24/7 Support</h3>
-					<p>
-						Dedicated concierge agents available around the clock to assist with your rental or
-						fleet needs.
-					</p>
-				</article>
-
-			</div>
-		</div>
-	</section>
-
-	<section class="section section--cta">
-		<div class="cta-card">
-			<div class="cta-card__pattern"></div>
-			<h2>Ready to transform your journey?</h2>
-			<p>
-				Join over 5,000 businesses managing their mobility through AutoReserve's high-performance
-				cloud platform.
-			</p>
-			<div class="cta-card__actions">
-				<a routerLink="/auth/register" class="cta-button cta-button--primary">Get Started Now</a>
-				<a routerLink="/contact" class="cta-button cta-button--secondary">Contact Sales</a>
-			</div>
-		</div>
-	</section>
+  <!-- ================= CTA ================= -->
+  <section class="container-app pb-16 sm:pb-24">
+    <div class="relative overflow-hidden rounded-4xl bg-ink-950 text-white px-6 py-14 sm:px-14 sm:py-20 text-center">
+      <div class="absolute inset-0"
+           style="background:
+             radial-gradient(40rem 20rem at 50% 120%, rgba(36,80,227,.5), transparent 60%);">
+      </div>
+      <div class="relative z-10 max-w-2xl mx-auto">
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white text-balance">
+          Prêt à prendre le volant ?
+        </h2>
+        <p class="mt-4 text-ink-300 leading-relaxed">
+          Rejoignez des centaines de conducteurs qui réservent leur voiture en
+          quelques clics avec AutoReserve.
+        </p>
+        <div class="mt-8 flex flex-col sm:flex-row justify-center gap-3">
+          <a routerLink="/fleet" class="btn-primary btn-lg">Réserver maintenant</a>
+          <a routerLink="/contact" class="btn-lg btn border border-white/15 text-white hover:bg-white/10">Nous contacter</a>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>

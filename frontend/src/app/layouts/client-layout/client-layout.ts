@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { Navbar } from '../../shared/components/navbar/navbar';
 
 @Component({
   selector: 'app-client-layout',
   standalone: true,
-  imports: [Navbar, RouterOutlet],
+  imports: [Navbar, RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './client-layout.html',
   styleUrl: './client-layout.css',
 })

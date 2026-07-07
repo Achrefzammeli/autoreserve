@@ -1,1 +1,107 @@
-<p>dashboard works!</p>
+<div class="container-app py-8 sm:py-12">
+
+  <!-- Salutation -->
+  <header class="mb-8">
+    <span class="eyebrow">Mon espace</span>
+    <h1 class="mt-2 text-2xl sm:text-4xl font-extrabold tracking-tight">{{ greeting }} 👋</h1>
+    <p class="mt-2 text-ink-500">Que souhaitez-vous faire aujourd'hui ?</p>
+  </header>
+
+  <!-- Actions rapides -->
+  <div class="grid sm:grid-cols-3 gap-4">
+    <a routerLink="/fleet" class="group card card-hover card-pad flex items-center gap-4">
+      <span class="w-12 h-12 rounded-2xl bg-brand-600 text-white flex items-center justify-center shadow-glow">
+        <span class="material-symbols-outlined">search</span>
+      </span>
+      <div class="flex-1">
+        <h2 class="font-extrabold">Trouver une voiture</h2>
+        <p class="text-[13px] text-ink-500 mt-0.5">Explorer la flotte disponible</p>
+      </div>
+      <span class="material-symbols-outlined text-ink-300 group-hover:text-brand-600 group-hover:translate-x-1 transition-all">arrow_forward</span>
+    </a>
+
+    <a routerLink="/client/bookings" class="group card card-hover card-pad flex items-center gap-4">
+      <span class="w-12 h-12 rounded-2xl bg-ink-950 text-white flex items-center justify-center">
+        <span class="material-symbols-outlined">event_available</span>
+      </span>
+      <div class="flex-1">
+        <h2 class="font-extrabold">Mes réservations</h2>
+        <p class="text-[13px] text-ink-500 mt-0.5">Suivre mes locations</p>
+      </div>
+      <span class="material-symbols-outlined text-ink-300 group-hover:text-brand-600 group-hover:translate-x-1 transition-all">arrow_forward</span>
+    </a>
+
+    <a routerLink="/client/profile" class="group card card-hover card-pad flex items-center gap-4">
+      <span class="w-12 h-12 rounded-2xl bg-ink-100 text-ink-700 flex items-center justify-center">
+        <span class="material-symbols-outlined">person</span>
+      </span>
+      <div class="flex-1">
+        <h2 class="font-extrabold">Mon profil</h2>
+        <p class="text-[13px] text-ink-500 mt-0.5">Compte et sécurité</p>
+      </div>
+      <span class="material-symbols-outlined text-ink-300 group-hover:text-brand-600 group-hover:translate-x-1 transition-all">arrow_forward</span>
+    </a>
+  </div>
+
+  <!-- Suggestions -->
+  <section class="mt-12">
+    <div class="flex items-end justify-between gap-4 mb-6">
+      <div>
+        <span class="eyebrow">Disponibles maintenant</span>
+        <h2 class="mt-2 text-xl sm:text-2xl font-extrabold tracking-tight">Nos suggestions pour vous</h2>
+      </div>
+      <a routerLink="/fleet" class="btn-outline btn-sm shrink-0">Tout voir</a>
+    </div>
+
+    <!-- Squelettes -->
+    <div *ngIf="loadingSuggestions" class="grid sm:grid-cols-3 gap-5">
+      <div class="skeleton h-64"></div>
+      <div class="skeleton h-64 hidden sm:block"></div>
+      <div class="skeleton h-64 hidden sm:block"></div>
+    </div>
+
+    <div *ngIf="!loadingSuggestions && suggestions.length === 0" class="empty-state">
+      <span class="material-symbols-outlined">no_crash</span>
+      <h3 class="text-lg font-extrabold">Aucun véhicule disponible pour le moment</h3>
+      <p class="text-sm text-ink-500">Revenez un peu plus tard ou contactez-nous.</p>
+    </div>
+
+    <div *ngIf="!loadingSuggestions && suggestions.length" class="grid sm:grid-cols-3 gap-5">
+      <a *ngFor="let v of suggestions" [routerLink]="['/vehicles', v.id]"
+         class="group card card-hover overflow-hidden">
+        <div class="relative h-40 bg-gradient-to-br from-ink-100 to-ink-200 overflow-hidden">
+          <img *ngIf="imageUrl(v)" [src]="imageUrl(v)" [alt]="v.brand + ' ' + v.model"
+               loading="lazy"
+               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          <span *ngIf="!imageUrl(v)"
+                class="material-symbols-outlined absolute inset-0 flex items-center justify-center text-[56px] text-ink-300">
+            directions_car
+          </span>
+        </div>
+        <div class="p-4 flex items-center justify-between gap-3">
+          <div>
+            <p class="text-[11px] font-extrabold uppercase tracking-[.12em] text-ink-400">{{ v.brand }}</p>
+            <h3 class="font-extrabold group-hover:text-brand-600 transition-colors">{{ v.model }}</h3>
+          </div>
+          <p class="font-extrabold text-ink-950 shrink-0">{{ v.price_per_day }} <span class="text-[12px] text-ink-400">TND/j</span></p>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Assistance -->
+  <section class="mt-12 card overflow-hidden">
+    <div class="bg-ink-950 text-white p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+      <div class="flex items-center gap-4">
+        <span class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined">support_agent</span>
+        </span>
+        <div>
+          <h2 class="font-extrabold text-white">Besoin d'aide ?</h2>
+          <p class="text-sm text-ink-300 mt-0.5">Notre équipe est disponible 24h/24, 7j/7.</p>
+        </div>
+      </div>
+      <a routerLink="/contact" class="btn-white shrink-0">Nous contacter</a>
+    </div>
+  </section>
+</div>
